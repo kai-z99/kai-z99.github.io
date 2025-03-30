@@ -49,6 +49,15 @@ ul {
 
 section {
     padding: 80px 0;
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+    will-change: opacity, transform;
+}
+
+section.revealed {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 h1, h2, h3, h4 {
@@ -407,241 +416,104 @@ footer {
     }
 }
 
-/* Cube Animation Section */
+/* Styles for the new cube flow */
 #cube-animation {
-    background-color: var(--black);
-    min-height: 500px;
-    display: flex;
-    justify-content: center;
+    background-color: var(--black); /* Or keep transparent if desired */
+    min-height: 400px; /* Adjust height as needed */
+    display: flex; /* Use flex to center container if needed */
     align-items: center;
-    overflow: hidden;
+    justify-content: center;
+    overflow: hidden; /* Important: Hide cubes outside the section */
+    position: relative; /* Needed for absolute positioning of cubes */
 }
 
-.cube-container {
-    width: 300px;
-    height: 300px;
-    perspective: 800px;
-    margin: 50px auto;
-    position: relative;
-}
-
-.hexagonal-bipyramid {
+/* Container for the actual flowing elements */
+.cube-flow-container {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
-    position: relative;
+    overflow: hidden; /* Redundant but safe */
+}
+
+.flowing-cube {
+    position: absolute;
+    width: 50px; /* Size of the cubes */
+    height: 50px;
+    opacity: 0.7; 
+    /* Apply ONLY flow animation */
+    animation-name: flowAcross; 
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    /* Remove transform properties from here */
+    /* transform: translateX(-100px); */ 
+    /* transform-style: preserve-3d; */ 
+    /* animation-name: flowAcross, rotateCubeSimple; */ /* Moved rotation */
+    /* animation-timing-function: linear, linear; */
+    /* animation-iteration-count: infinite, infinite; */
+    will-change: transform, top, opacity; /* transform is still changing via animation */
+    /* Set initial position using left (simpler for this animation) */
+    left: -100px; 
+}
+
+/* --- New inner rotator element --- */
+.cube-rotator {
+    width: 100%;
+    height: 100%;
+    position: relative; /* Position faces relative to this */
     transform-style: preserve-3d;
-    transform: rotateX(15deg) rotateY(45deg);
-    transition: transform 0.5s ease;
+    /* Apply ONLY rotation animation */
+    animation-name: rotateCubeSimple;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    /* Initial rotation state (optional, can be 0) */
+    /* transform: rotateX(0deg) rotateY(0deg); */ 
 }
+/* --- End of rotator element --- */
 
-/* Hide diamond elements */
-.face.diamond-1, .face.diamond-2, .face.diamond-3, .face.diamond-4,
-.face.diamond-5, .face.diamond-6, .face.diamond-7, .face.diamond-8,
-.edge.diamond-edge-1, .edge.diamond-edge-2, .edge.diamond-edge-3, .edge.diamond-edge-4,
-.edge.diamond-edge-5, .edge.diamond-edge-6, .edge.diamond-edge-7, .edge.diamond-edge-8,
-.edge.diamond-edge-9, .edge.diamond-edge-10, .edge.diamond-edge-11, .edge.diamond-edge-12 {
-    display: none;
-}
-
-/* Cube faces */
-.face.cube-front, .face.cube-back, .face.cube-right, 
-.face.cube-left, .face.cube-top, .face.cube-bottom {
+/* --- Style for the cube faces (adjust selector) --- */
+.cube-rotator .face { /* Selector changed */
     position: absolute;
-    width: 150px;
-    height: 150px;
-    left: 75px;
-    top: 75px;
-    background-color: transparent;
-    border: 2px solid var(--yellow);
-    opacity: 0.8;
+    width: 100%; 
+    height: 100%; 
+    background-color: rgba(34, 34, 34, 0.4); 
+    border: 1px solid var(--yellow); 
+    opacity: 0.8; 
 }
 
-.face.cube-front {
-    transform: translateZ(75px);
-}
+/* Position each face in 3D space (adjust selector) */
+.cube-rotator .face.front  { transform: rotateY(  0deg) translateZ(25px); }
+.cube-rotator .face.back   { transform: rotateY(180deg) translateZ(25px); }
+.cube-rotator .face.left   { transform: rotateY(-90deg) translateZ(25px); }
+.cube-rotator .face.right  { transform: rotateY( 90deg) translateZ(25px); }
+.cube-rotator .face.top    { transform: rotateX( 90deg) translateZ(25px); }
+.cube-rotator .face.bottom { transform: rotateX(-90deg) translateZ(25px); }
+/* --- End of face styles --- */
 
-.face.cube-back {
-    transform: rotateY(180deg) translateZ(75px);
-}
-
-.face.cube-right {
-    transform: rotateY(90deg) translateZ(75px);
-}
-
-.face.cube-left {
-    transform: rotateY(-90deg) translateZ(75px);
-}
-
-.face.cube-top {
-    transform: rotateX(90deg) translateZ(75px);
-}
-
-.face.cube-bottom {
-    transform: rotateX(-90deg) translateZ(75px);
-}
-
-/* Cube edges */
-.edge.cube-edge {
-    position: absolute;
-    background-color: var(--yellow);
-    width: 2px;
-    transform-origin: center;
-}
-
-/* Horizontal edges (top) */
-.edge.cube-edge-1, .edge.cube-edge-2, .edge.cube-edge-3, .edge.cube-edge-4 {
-    width: 150px;
-    height: 2px;
-    left: 75px;
-    top: 75px;
-}
-
-.edge.cube-edge-1 {
-    transform: translateZ(75px) translateY(-75px);
-}
-
-.edge.cube-edge-2 {
-    transform: rotateY(90deg) translateZ(75px) translateY(-75px);
-}
-
-.edge.cube-edge-3 {
-    transform: rotateY(180deg) translateZ(75px) translateY(-75px);
-}
-
-.edge.cube-edge-4 {
-    transform: rotateY(270deg) translateZ(75px) translateY(-75px);
-}
-
-/* Horizontal edges (bottom) */
-.edge.cube-edge-5, .edge.cube-edge-6, .edge.cube-edge-7, .edge.cube-edge-8 {
-    width: 150px;
-    height: 2px;
-    left: 75px;
-    top: 75px;
-}
-
-.edge.cube-edge-5 {
-    transform: translateZ(75px) translateY(75px);
-}
-
-.edge.cube-edge-6 {
-    transform: rotateY(90deg) translateZ(75px) translateY(75px);
-}
-
-.edge.cube-edge-7 {
-    transform: rotateY(180deg) translateZ(75px) translateY(75px);
-}
-
-.edge.cube-edge-8 {
-    transform: rotateY(270deg) translateZ(75px) translateY(75px);
-}
-
-/* Vertical edges */
-.edge.cube-edge-9, .edge.cube-edge-10, .edge.cube-edge-11, .edge.cube-edge-12 {
-    width: 2px;
-    height: 150px;
-    left: 75px;
-    top: 75px;
-}
-
-.edge.cube-edge-9 {
-    transform: translateX(-75px) translateZ(75px);
-}
-
-.edge.cube-edge-10 {
-    transform: translateX(75px) translateZ(75px);
-}
-
-.edge.cube-edge-11 {
-    transform: translateX(-75px) translateZ(-75px);
-}
-
-.edge.cube-edge-12 {
-    transform: translateX(75px) translateZ(-75px);
-}
-
-.cube-controls {
-    text-align: center;
-    margin-top: 30px;
-}
-
-.cube-controls button {
-    margin: 0 10px;
-}
-
-@keyframes rotateCube {
+/* Keyframes for horizontal movement (Changed to use 'left') */
+@keyframes flowAcross {
     0% {
-        transform: rotateX(0deg) rotateY(0deg);
+        left: -100px; /* Start off-screen */
     }
     100% {
-        transform: rotateX(360deg) rotateY(360deg);
+        left: 100%; /* Move fully across the viewport width */
+        /* Use percentage to be relative to parent container */
     }
 }
 
-.hexagonal-bipyramid.animate {
-    animation: rotateCube 20s infinite linear;
-}
-
-/* Flappy Bird Game Section */
-#flappy-bird {
-    background-color: var(--black);
-    padding: 80px 0;
-}
-
-.game-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: 20px auto;
-    max-width: 500px;
-}
-
-#flappy-canvas {
-    background-color: var(--black);
-    border: 2px solid var(--yellow);
-    display: block;
-    margin: 0 auto;
-}
-
-.game-controls {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 20px;
-    width: 100%;
-}
-
-#start-game {
-    margin-bottom: 15px;
-}
-
-.score-display, .high-score {
-    font-size: 1.5rem;
-    margin: 5px 0;
-    color: var(--yellow);
-    font-weight: 600;
-}
-
-.game-instructions {
-    margin-top: 20px;
-    text-align: center;
-    padding: 15px;
-    border: 1px dashed var(--yellow);
-    background-color: rgba(247, 223, 30, 0.05);
-    border-radius: 5px;
-}
-
-.game-instructions p {
-    font-size: 1.1rem;
-    margin: 0;
-}
-
-@media (max-width: 576px) {
-    #flappy-canvas {
-        width: 100%;
-        height: auto;
+/* Rotation keyframes (ensure ONLY rotation) */
+@keyframes rotateCubeSimple {
+     0% {
+        /* Define only rotation */
+        transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+    }
+    100% {
+        /* Define only rotation */
+        transform: rotateX(360deg) rotateY(720deg) rotateZ(360deg);
     }
 }
+/* --- End of rotation keyframes --- */
 
 /* Animated Background */
 body::before {
@@ -700,14 +572,14 @@ body::after {
 }
 
 /* Make section backgrounds more transparent */
-#hero, #about, #experience, #cube-animation, #flappy-bird, #projects, #contact {
+#hero, #about, #experience, #cube-animation, #projects, #contact {
     position: relative;
     z-index: 1;
     background-color: rgba(34, 34, 34, 0.5);
 }
 
 /* Remove after pseudo-elements and use direct background colors */
-#hero::after, #about::after, #experience::after, #cube-animation::after, #flappy-bird::after, #projects::after, #contact::after {
+#hero::after, #about::after, #experience::after, #cube-animation::after, #projects::after, #contact::after {
     display: none;
 }
 

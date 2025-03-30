@@ -40,53 +40,10 @@
 
     <section id="cube-animation">
         <div class="container">
-            <h2>Cube Animation</h2>
-            <div class="cube-container">
-                <div class="hexagonal-bipyramid" id="cube">
-                    <!-- Cube faces - 6 square faces -->
-                    <div class="face cube-front"></div>
-                    <div class="face cube-back"></div>
-                    <div class="face cube-right"></div>
-                    <div class="face cube-left"></div>
-                    <div class="face cube-top"></div>
-                    <div class="face cube-bottom"></div>
-                    
-                    <!-- Cube edges - 12 edges connecting vertices -->
-                    <div class="edge cube-edge-1"></div>
-                    <div class="edge cube-edge-2"></div>
-                    <div class="edge cube-edge-3"></div>
-                    <div class="edge cube-edge-4"></div>
-                    <div class="edge cube-edge-5"></div>
-                    <div class="edge cube-edge-6"></div>
-                    <div class="edge cube-edge-7"></div>
-                    <div class="edge cube-edge-8"></div>
-                    <div class="edge cube-edge-9"></div>
-                    <div class="edge cube-edge-10"></div>
-                    <div class="edge cube-edge-11"></div>
-                    <div class="edge cube-edge-12"></div>
-                </div>
-            </div>
-            <div class="cube-controls">
-                <button id="pause-cube" class="btn">Pause</button>
-                <button id="speed-up" class="btn">Speed Up</button>
-                <button id="slow-down" class="btn">Slow Down</button>
-            </div>
-        </div>
-    </section>
-
-    <section id="flappy-bird">
-        <div class="container">
-            <h2>Wireframe Flappy Bird</h2>
-            <div class="game-container">
-                <canvas id="flappy-canvas" width="480" height="640"></canvas>
-                <div class="game-controls">
-                    <button id="start-game" class="btn">Start Game</button>
-                    <div class="score-display">Score: <span id="score">0</span></div>
-                    <div class="high-score">High Score: <span id="high-score">0</span></div>
-                </div>
-                <div class="game-instructions">
-                    <p>Click or press Space to make the bird fly.<br>Avoid the obstacles!</p>
-                </div>
+            <!-- Keep the container if you want padding, or remove if the flow should span edge-to-edge -->
+            <!-- Content inside cube-container is removed -->
+            <div class="cube-flow-container"> 
+                <!-- Cubes will be added here by JavaScript -->
             </div>
         </div>
     </section>
