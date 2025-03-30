@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Sticky header
     const header = document.querySelector('header');
     const heroSection = document.querySelector('#hero');
-
+    
     window.addEventListener('scroll', () => {
         if (window.scrollY > 50) {
             header.classList.add('scrolled');
@@ -13,22 +13,22 @@ document.addEventListener('DOMContentLoaded', () => {
             header.style.backgroundColor = 'var(--black)';
         }
     });
-
+    
     // Smooth scrolling for navigation links
     const navLinks = document.querySelectorAll('nav a');
-
+    
     navLinks.forEach(link => {
         link.addEventListener('click', function(e) {
             e.preventDefault();
-
+            
             // Get the target section id from the href attribute
             const targetId = this.getAttribute('href');
             const targetSection = document.querySelector(targetId);
-
+            
             // Calculate the position to scroll to
             const headerHeight = header.offsetHeight;
             const targetPosition = targetSection.offsetTop - headerHeight;
-
+            
             // Scroll to the target position
             window.scrollTo({
                 top: targetPosition,
@@ -36,16 +36,16 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     });
-
+    
     // ================================================
     // Form Handling & Notifications (Unchanged)
     // ================================================
     const contactForm = document.getElementById('contactForm');
-
+    
     if (contactForm) {
         contactForm.addEventListener('submit', function(e) {
             e.preventDefault();
-
+            
             const name = document.getElementById('name').value.trim();
             const email = document.getElementById('email').value.trim();
             const message = document.getElementById('message').value.trim();
@@ -54,21 +54,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 showNotification('Please fill out all fields', 'error');
                 return;
             }
-
+            
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(email)) {
                 showNotification('Please enter a valid email address', 'error');
                 return;
             }
-
+            
             // Simulate sending data
             console.log('Form Submitted:', { name, email, message });
             showNotification('Your message has been sent successfully!', 'success');
-
+            
             contactForm.reset();
         });
     }
-
+    
     // Notification function
     function showNotification(message, type) {
         let notificationContainer = document.querySelector('.notification-container');
@@ -82,11 +82,11 @@ document.addEventListener('DOMContentLoaded', () => {
             notificationContainer.style.zIndex = '1000';
             document.body.appendChild(notificationContainer);
         }
-
+        
         const notification = document.createElement('div');
         notification.className = `notification ${type}`; // Use classes for styling if defined in CSS
         notification.textContent = message;
-
+        
         // Apply basic inline styles (fallback if CSS classes aren't defined)
         notification.style.backgroundColor = type === 'success' ? 'rgba(76, 175, 80, 0.9)' : 'rgba(244, 67, 54, 0.9)';
         notification.style.color = 'white';
@@ -96,9 +96,9 @@ document.addEventListener('DOMContentLoaded', () => {
         notification.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
         notification.style.opacity = '0'; // Start hidden for transition
         notification.style.transition = 'opacity 0.3s ease-in-out';
-
+        
         notificationContainer.appendChild(notification);
-
+        
         // Trigger fade in
         requestAnimationFrame(() => {
             notification.style.opacity = '1';
@@ -118,12 +118,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }, { once: true }); // Ensure listener runs only once
         }, 5000);
     }
-
+    
     // ================================================
     // Reveal Animations (Unchanged)
     // ================================================
     const revealSections = document.querySelectorAll('section');
-
+    
     function checkScroll() {
         const triggerBottom = window.innerHeight * 1.0; 
 
@@ -138,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-
+    
     // Set initial state using CSS for better performance
     // Add this to your CSS:
     /*
@@ -152,7 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
         transform: translateY(0);
     }
     */
-
+    
     // Check scroll position on load and scroll
     // Debounce scroll handler for performance
     let scrollTimeout;
@@ -168,7 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Project Card Hover Effect (Unchanged)
     // ================================================
     const projectCards = document.querySelectorAll('.project-card');
-
+    
     projectCards.forEach(card => {
         // Using CSS for hover is generally preferred for performance,
         // but this JS approach works too.
@@ -177,12 +177,12 @@ document.addEventListener('DOMContentLoaded', () => {
         card.addEventListener('mouseenter', () => {
             card.style.borderLeftWidth = '8px';
         });
-
+        
         card.addEventListener('mouseleave', () => {
             card.style.borderLeftWidth = '4px'; // Assuming initial width is 4px
         });
     });
-
+    
     // ================================================
     // Update Copyright Year (Unchanged)
     // ================================================
@@ -250,4 +250,4 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     createFlowingCubes(); // Call the function to generate the cubes
-});
+}); 
