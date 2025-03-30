@@ -125,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const revealSections = document.querySelectorAll('section');
 
     function checkScroll() {
-        const triggerBottom = window.innerHeight * 0.8; // Trigger when section top enters lower 80% of viewport
+        const triggerBottom = window.innerHeight * 1.0; 
 
         revealSections.forEach(section => {
             const sectionTop = section.getBoundingClientRect().top;
@@ -134,8 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (sectionTop < triggerBottom) {
                 section.classList.add('revealed'); // Add class for CSS transition
             } else {
-                 // Optional: Remove class if you want it to hide again when scrolling up
-                 // section.classList.remove('revealed');
+                 section.classList.remove('revealed'); // Remove class when scrolled out
             }
         });
     }
