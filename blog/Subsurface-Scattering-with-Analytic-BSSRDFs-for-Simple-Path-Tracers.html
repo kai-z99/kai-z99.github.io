@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subsurface Scattering with Analytic BSSRDFs for Simple Path Tracers</title>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            background: #fff;
+            color: #222;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 700px;
+            margin: 60px auto 0 auto;
+            padding: 32px 24px;
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border-radius: 8px;
+        }
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5em;
+            font-weight: 600;
+        }
+        .post-meta {
+            color: #888;
+            font-size: 1rem;
+            margin-bottom: 2em;
+        }
+        .post-content {
+            font-size: 1.15rem;
+            line-height: 1.7;
+        }
+        a.back-link {
+            display: inline-block;
+            margin-bottom: 2em;
+            color: #0077cc;
+            text-decoration: none;
+            font-size: 1rem;
+        }
+        a.back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">&larr; Back to Blog</a>
+        <h1>Subsurface Scattering with Analytic BSSRDFs for Simple Path Tracers</h1>
+        <div class="post-meta">By Kai Zhang &bull; <!-- Date can be added here --></div>
+        <div class="post-content">
+            <p><em>Coming soon: an in-depth look at implementing subsurface scattering using analytic BSSRDFs in simple path tracers.</em></p>
+            <h2>Rendering Equation</h2>
+            <p>
+                $$
+                L_o(x, \omega_o) = L_e(x, \omega_o) + \int_{H^2} f_r(x, \omega_i, \omega_o) L_i(x, \omega_i) (\omega_i \cdot n) d\omega_i
+                $$
+            </p>
+            <h2>Separable BSSRDF</h2>
+            <p>
+                $$
+                S(x_i, \omega_i, x_o, \omega_o) = 
+                \frac{1}{\pi} F_r(\omega_i) R(\|x_i - x_o\|) F_t(\omega_o)
+                $$
+            </p>
+        </div>
+    </div>
+</body>
+</html>

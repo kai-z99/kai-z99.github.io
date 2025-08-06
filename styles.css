@@ -714,7 +714,7 @@ body::after {
 /* Add a body background color */
 body {
     background-color: var(--black);
-}
+} 
 
 /* PBR Showcase Section */
 #pbr-showcase {
@@ -765,4 +765,4 @@ body {
     .pbr-container {
         padding: 0 10px;
     }
-} 
+}
