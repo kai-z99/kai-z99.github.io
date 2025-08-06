@@ -63,7 +63,47 @@
     <div class="container">
         <a href="index.html" class="back-link">&larr; Back to Blog</a>
         <h1>Subsurface Scattering with Analytic BSSRDFs for Simple Path Tracers</h1>
-        <div class="post-meta">Kai Zhang &bull; <!-- Date can be added here --></div>
+        <div class="post-meta" style="margin-bottom:1.5em;">By Kai Zhang</div>
+        <img id="toggle-image" src="../images/xyz10000spp7.0-0.2.png" alt="XYZ Dragon 7.0" style="display:block; margin: 0 auto 1em auto; max-width: 100%; border-radius: 8px;">
+        <button id="toggle-image-btn" style="display:block; margin: 0 auto 2em auto; padding: 0.5em 1.2em; font-size:1em; border-radius:6px; border:1px solid #ccc; background:#f5f5f5; cursor:pointer;">Show SSS off</button>
+        <script>
+            const img = document.getElementById('toggle-image');
+            const btn = document.getElementById('toggle-image-btn');
+          
+            // 1) Define your three states:
+            const states = [
+              {
+                src: '../images/xyz10000spp7.0-0.2.png',
+                alt: 'XYZ Dragon SSS On',
+                nextText: 'Show SSS Low Scattering'
+              },
+              {
+                src: '../images/xyz10000spp0.1-0.2.png',
+                alt: 'XYZ Dragon SSS Off',
+                nextText: 'Show Lambert'
+              },
+              {
+                src: '../images/xyz10000spplambert.png',      // <-- Your third “Lambert” image here
+                alt: 'XYZ Dragon Lambert',
+                nextText: 'Show SSS High Scattering'
+              }
+            ];
+          
+            // 2) Start at state 0
+            let stateIndex = 0;
+            // (Optional) override the button text to match your HTML default
+            btn.textContent = states[stateIndex].nextText;
+          
+            btn.addEventListener('click', () => {
+              // advance to the next state (wrap around)
+              stateIndex = (stateIndex + 1) % states.length;
+          
+              // update image and button
+              img.src         = states[stateIndex].src;
+              img.alt         = states[stateIndex].alt;
+              btn.textContent = states[stateIndex].nextText;
+            });
+          </script>
         <div class="post-content">
             <p>I've been implementing a simple energy conserving path tracer and wanted to add subsurface scattering to it and I found most sources to be scattered. If you want to implement a simple, physically based SSS into your path tracer, I hope I can help.</p>
             <p>In SSS, light enters a point on a surface, then re-emerged at a point that may or may not be where it first entered. Looking at the rendering equation:</p>
@@ -140,7 +180,7 @@
 }
 </code></pre>
             <p>This is purely an artistic choice, so you can define it however you want, as long as \(s > 0\).</p>
-            <p>Finally, \(A\) in the diffusion profile represents again an albedo, but this time you should use <a href="https://www.pbr-book.org/3ed-2018/Volume_Scattering/The_BSSRDF#eq:bssrdf-effective-albedo" target="_blank" rel="noopener noreferrer">effective albedo as described in pbrt 11.11</a>.</p>
+            <p>Finally, \(A\) in the diffusion profile represents again an albedo, but this time you should use effective albedo as described in <a href="https://www.pbr-book.org/3ed-2018/Volume_Scattering/The_BSSRDF#eq:bssrdf-effective-albedo" target="_blank" rel="noopener noreferrer">pbrt 11.11</a>.</p>
             <p>The effective albedo is defined as</p>
             <p>
                 $$
@@ -176,7 +216,7 @@
                 \text{CDF}(r) = 1 - \frac{1}{4} e^{-r/d} - \frac{3}{4} e^{-r/(3d)}
                 $$
             </p>
-            <p>Although the original paper claims this CDF is not analytically invertible, Zero Radiance in 2019 proved it actually was:</p>
+            <p>Although the original paper claims this CDF is not analytically invertible, <a href="https://zero-radiance.github.io/post/sampling-diffusion/" target="_blank" rel="noopener noreferrer">Zero Radiance in 2019 proved it in fact was</a>:</p>
             <p style="text-align:center; margin: 1.5em 0;">
                 $$
                 x = sr = 3 \log\left(\frac{1 + G(u)^{-1/3} + G(u)^{1/3}}{4u}\right),

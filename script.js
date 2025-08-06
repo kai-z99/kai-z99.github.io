@@ -15,26 +15,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     // Smooth scrolling for navigation links
-    const navLinks = document.querySelectorAll('nav a');
-    
+    const navLinks = document.querySelectorAll('nav a[href^="#"]');
+
     navLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            // Get the target section id from the href attribute
-            const targetId = this.getAttribute('href');
-            const targetSection = document.querySelector(targetId);
-            
-            // Calculate the position to scroll to
-            const headerHeight = header.offsetHeight;
-            const targetPosition = targetSection.offsetTop - headerHeight;
-            
-            // Scroll to the target position
-            window.scrollTo({
-                top: targetPosition,
-                behavior: 'smooth'
-            });
-        });
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const targetId = this.getAttribute('href');
+        const targetSection = document.querySelector(targetId);
+        const headerHeight = header.offsetHeight;
+        const targetPosition = targetSection.offsetTop - headerHeight;
+        window.scrollTo({ top: targetPosition, behavior: 'smooth' });
+      });
     });
     
     // ================================================
