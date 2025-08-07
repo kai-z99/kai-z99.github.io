@@ -187,13 +187,53 @@
                 S_r(\|p_o - p_i\|) \approx R(r) = A s \frac{e^{-sr/\ell} + e^{-sr/(3\ell)}}{8 \pi \ell r}
                 $$
             </p>
-            <p>Here \(r\) is the distance from the entrance and exit points. \(\ell\) is the mean free path which essentially controls how far the light scatters under the surface before reemerging. \(s\) is the shape parameter, defined as</p>
+            <p>Here \(r\) is the distance from the entrance and exit points. \(\ell\) is the user controlled the mean free path which essentially controls how far the light scatters under the surface before reemerging.</p>
+            <p>\(A\) in the diffusion profile represents our user defined material albedo.</p>
+            <div style="margin-left:1.5em; color:#797979; font-size:0.85em;">
+                <em>Technically, \(A\) actually is a 1-1 mapping for \(\rho_{eff}\), the effective albedo, as described in 
+                    <a href="https://www.pbr-book.org/3ed-2018/Volume_Scattering/The_BSSRDF#eq:bssrdf-effective-albedo" target="_blank" rel="noopener noreferrer">pbrt 11.11</a>.
+                    Effective albedo, as pbrt states, is "the material’s overall albedo", seperate from \(\rho\), the single scattering albedo. Effective albedo is defined as:
+                <p>
+                    $$
+                    \rho_{eff} = \int_{0}^{2\pi}\int_{0}^{\infty}{rS_r(r) drd \phi}
+                    $$
+                </p>
+                <p>Where \(S_r(r)\) is the diffusion profile. For Burley's profile:</p>
+                <p>
+                    $$
+                    \rho_{eff} = \int_{0}^{2\pi}\int_{0}^{\infty}{rR(r) drd \phi} = \int_{0}^{2\pi}\int_{0}^{\infty}{rAR'(r) drd \phi}
+                    $$
+                </p>
+                <p>Where</p>
+                <p>
+                    $$
+                    R'(r) = s \frac{e^{-sr/\ell} + e^{-sr/(3\ell)}}{8 \pi \ell r}
+                    $$
+                </p>
+                <p>Since \(R'(r)\) is normalized:</p>
+                <p>
+                    $$
+                    \int_{0}^{2\pi}\int_{0}^{\infty}{rR'(r) drd \phi} = 1
+                    $$
+                </p>
+                <p>So it follows that:</p>
+                <p>
+                    $$
+                    \rho_{eff} = \int_{0}^{2\pi}\int_{0}^{\infty}{rAR'(r) drd \phi} = A
+                    $$
+                </p>
+                <p>Essentially what this means is that whatever you set \(A\) to, the materials effective albedo will be exactly that visually, which is good for artists.</p>
+                </em>
+              </div>
+                 
+            </p>
+            <p> Finally, \(s\) is the shape parameter, defined as</p>
             <p style="text-align:center; margin: 1.5em 0;">
                 $$
                 s = 1.85 - A + 7|A - 0.8|^3
                 $$
             </p>
-            <p>Where \(A\) is albedo. Note that since albedo is usually a <code>vec3</code>, I chose to approximate it with a luminance function:</p>
+            <p>Note that since albedo is usually a <code>vec3</code>, I chose to approximate it with a luminance function:</p>
             <pre style="margin: 1.5em 0;"><code>__device__ inline float Luminance(const glm::vec3& col)
 {
     const glm::vec3 lumaWeights(0.2126f, 0.7152f, 0.0722f);
@@ -201,19 +241,6 @@
 }
 </code></pre>
             <p>This is purely an artistic choice, so you can define it however you want, as long as \(s > 0\).</p>
-            <p>Finally, \(A\) in the diffusion profile represents again an albedo, but this time you should use effective albedo as described in <a href="https://www.pbr-book.org/3ed-2018/Volume_Scattering/The_BSSRDF#eq:bssrdf-effective-albedo" target="_blank" rel="noopener noreferrer">pbrt 11.11</a>.</p>
-            <p>The effective albedo is defined as</p>
-            <p>
-                $$
-                \rho_{\mathrm{eff}} = \int_0^{2\pi} \int_0^{\infty} r S_r(r) \, dr \, d\phi
-                $$
-            </p>
-            <p>Luckily for us, Burley's diffusion profile is normalized, meaning this simply integrates to \(A\).</p>
-            <p>
-                $$
-                \rho_{eff} = \int_{0}^{2\pi}\int_{0}^{\infty}{rR(r) drd \phi} = A
-                $$
-            </p>
             <h2>Importance Sampling</h2>
             <p>The next question is, how do we decide our enter and exit points \(p_i\), \(p_o\) to evaluate the separable BSSRDF? We need to use importance sampling. Essentially I will describe a simplified version of the disk sampling described in <a href="https://pbr-book.org/3ed-2018/Light_Transport_II_Volume_Rendering/Sampling_Subsurface_Reflection_Functions" target="_blank" rel="noopener noreferrer">pbrt 15.4</a>.</p>
             <p>So let's say you shoot a ray into the scene, it intersects a surface and passes the <span style="white-space:nowrap;">\((1 - F(\omega_o))\)</span> test, meaning it has entered the surface</p>
@@ -352,12 +379,66 @@
                 p(\omega_i) = \frac{cos(\theta_i)}{\pi}
                 $$
             </p>
-            <p>Since R(r) is normalized, we get a really nice fact: </p>
+            <p>And now I'll pull this out my hat and state:</p>
             <p>
                 $$
-                \int_{0}^{\infty}\int_{0}^{2\pi}{R(r)rd \phi dr} = A
+                p(p_i) = s \frac{e^{-sr/\ell} + e^{-sr/(3\ell)}}{8 \pi \ell r}
                 $$
             </p>
+            <p>So the pdf of picking your entrance point is just the diffusion profile without \(A\).</p>
+            <div style="margin-left:1.5em; color:#797979; font-size:0.8em;">
+                <em>
+                    If you want the derivation, here it is. For \(p(p_i)\), we want to find:
+                    <p>
+                        $$
+                        p(p_i) = \frac{R(r)}{\int_{0}^{2\pi} \int_{0}^{\infty}rR(r)drd\phi}
+                        $$
+        
+                    </p>
+                    <p>Lets define:</p>
+                    <p>
+                        $$
+                        R'(r) = s \frac{e^{-sr/\ell} + e^{-sr/(3\ell)}}{8 \pi \ell r}
+                        $$
+                    </p>
+                    <p>So</p>
+                    <p>
+                        $$
+                        R(r) = AR'(r)
+                        $$
+                    </p>
+                    <p>Since the diffusion profile is normalized:</p>
+                    <p>
+                        $$
+                        \int_{0}^{2\pi}\int_{0}^{\infty}{rR'(r) drd \phi} = 1
+                        $$
+                    </p>
+                    <p>Therefore:</p>
+                    <p>
+                        $$
+                        \int_{0}^{2\pi} \int_{0}^{\infty}rR(r)drd\phi = \int_{0}^{2\pi} \int_{0}^{\infty}rAR'(r)drd\phi = A
+                        $$
+                    </p>
+                    <p>Plug it back in:</p>
+                    <p>
+                        $$
+                        p(p_i) = \frac{R(r)}{A} = \frac{AR'(r)}{A} = R'(r)
+                        $$
+                    </p>
+                </em>
+            </div>
+            <h2>Conclusion</h2>
+            <p>
+                Hopefully now you know how to calculate each piece of the Monte Carlo estimator:
+            </p>
+            <p>
+                $$
+                L_o(p_o, \omega_o) \approx (1 - F(\omega_o))\frac{1}{N}\sum_{i=1}^{N}{\frac{ L_i(p_o, \omega_i) S_p(p_o, p_i) S_\omega(\omega_i) (\omega_i \cdot n_i)}{p(\omega_i)p(p_i)}}
+                $$
+            </p>
+
+
+
         </div>
     </div>
 </body>
