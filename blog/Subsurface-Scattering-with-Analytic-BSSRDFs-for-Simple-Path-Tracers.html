@@ -109,25 +109,46 @@
             <p>In SSS, light enters a point on a surface, then re-emerged at a point that may or may not be where it first entered. Looking at the rendering equation:</p>
             <p>
                 $$
-                L_o(x, \omega_o) = L_e(x, \omega_o) + \int_{H^2} f_r(x, \omega_i, \omega_o) L_i(x, \omega_i) (\omega_i \cdot n) d\omega_i
+                L_o(p_o, \omega_o) = \int_{\Omega} f_r(p_o, \omega_i, \omega_o) L_i(p_o, \omega_i) (\omega_i \cdot n_i) d\omega_i
                 $$
             </p>
-            <p>We can see that it only supports light entering and exiting at one point. Therefore we need to expand this with BSSRDF:</p>
+            <p>The monte carlo estimator is:</p>
             <p>
                 $$
-                L_o(x_o, \omega_o) = L_e(x_o, \omega_o) + \int_A \int_{H^2} S(x_i, \omega_i, x_o, \omega_o) L_i(x_i, \omega_i) (\omega_i \cdot n_i) d\omega_i dA(x_i)
+                L_o(p_o, \omega_o) \approx \frac{1}{N}\sum_{i=1}^{N}{\frac{f_r(p_o, \omega_i, \omega_o) L_i(p_o, \omega_i) (\omega_i \cdot n_i)}{p(\omega_i)}}
+                $$
+            </p>
+
+
+            <p>We can see that it only supports light entering and exiting at one point. Therefore we to use the BSSRDF:</p>
+            <p>
+                $$
+                L_o(p_o, \omega_o) = \int_A \int_{\Omega} S(p_o, \omega_o, p_i, \omega_i) L_i(p_o, \omega_i) (\omega_i \cdot n_i) d\omega_i dA
                 $$
             </p>
             <p>As you can see, not only do we have a hemisphere around our point but we must also consider the area surrounding it.</p>
-            <p>Of course the integral in this form is quite difficult to evaluate (it has 8 dimensions!). Luckily in 2001, <a href="http://www.graphics.stanford.edu/papers/bssrdf/bssrdf.pdf" target="_blank" rel="noopener noreferrer">Jensen et al proposed a more manageable form</a> of the BSSRDF term called the separable BSSRDF:</p>
+            <p>Of course the integral in this form is quite difficult to evaluate. Luckily in 2001, <a href="http://www.graphics.stanford.edu/papers/bssrdf/bssrdf.pdf" target="_blank" rel="noopener noreferrer">Jensen et al proposed a more manageable form</a> of the BSSRDF term called the separable BSSRDF:</p>
             <p>
                 $$
                 S(p_o, \omega_o, p_i, \omega_i) = (1 - F(\omega_o)) S_p(p_o, p_i) S_\omega(\omega_i)
                 $$
             </p>
+            <p>Therefore the rendering equation becomes:</p>
+            <p>
+                $$
+                L_o(p_o, \omega_o) = (1 - F(\omega_o))\int_{A} S_p(p_o, p_i) \int_{\Omega}S_{\omega}(\omega_i)(\omega_i \cdot n_i) d\omega_idA
+                $$
+            </p>
+            <p>Then the monte carlo estimator is:</p>
+            <p>
+                $$
+                L_o(p_o, \omega_o) \approx (1 - F(\omega_o))\frac{1}{N}\sum_{i=1}^{N}{\frac{ L_i(p_o, \omega_i) S_p(p_o, p_i) S_\omega(\omega_i) (\omega_i \cdot n_i)}{p(\omega_i)p(p_i)}}
+                $$
+            </p>
             <p>I will now explain how to integrate each term into your Monte Carlo path tracer.</p>
             <div style="margin-top:2em;">\((1 - F(\omega_o))\)</div>
-            <p>This term essentially accounts for whether the light actually enters the surface and scatters. Therefore, we can just use it as a test to see if we actually need to evaluate the BSSRDF. Draw a random number uniformly \(u_1 \in [0, 1]\) and test \(u_1 < 1 - F(\omega_o)\). If it fails, simply fall back to something like a reflection lobe.</p>
+            <p>This term essentially accounts for whether the light actually enters the surface and scatters. So it is actually just your BSDF's chance of transmission with \(\omega_o\). If its true, we evaulate the BSSRDF.</p>
+            <p>If you dont have a full BSDF system, draw a random number uniformly \(u_1 \in [0, 1]\) and test \(u_1 < 1 - F(\omega_o)\). If it fails, simply fall back to something like a reflection lobe. Otherwise we evaulate the BSSRDF.</p>
             <div style="margin-top:2em;">\(S_\omega(\omega_i)\)</div>
             <p>This term accounts for the energy loss when the ray exits the surface. Here is the function (from <a href="https://pbr-book.org/3ed-2018/Volume_Scattering/The_BSSRDF" target="_blank" rel="noopener noreferrer">pbrt 11.7</a>):</p>
             <p>
@@ -157,13 +178,13 @@
             <p>This term is the spatial term and accounts for energy when the light scatters under the surface. We make the simplifying assumption:</p>
             <p>
                 $$
-                S_p(p_o, p_i) = S_r(\|p_o - p_i\|)
+                S_p(p_o, p_i) \approx S_r(\|p_o - p_i\|)
                 $$
             </p>
-            <p>So that the only factor affecting this term is the distance between the entrance and exit of the light. This has many different variations called diffusion profiles, which generally are functions that approximate the area integral. I decided to use <a href="https://graphics.pixar.com/library/ApproxBSSRDF/paper.pdf" target="_blank" rel="noopener noreferrer">this one described by Brent Burley et al. in 2015</a>:</p>
+            <p>So that the only factor affecting this term is the distance between the entrance and exit of the light. There are different variations of diffusion profiles, which generally are functions that approximate \(S_p\). I decided to use <a href="https://graphics.pixar.com/library/ApproxBSSRDF/paper.pdf" target="_blank" rel="noopener noreferrer">this one described by Brent Burley et al. in 2015</a>:</p>
             <p>
                 $$
-                R(r) = A s \frac{e^{-sr/\ell} + e^{-sr/(3\ell)}}{8 \pi \ell r}
+                S_r(\|p_o - p_i\|) \approx R(r) = A s \frac{e^{-sr/\ell} + e^{-sr/(3\ell)}}{8 \pi \ell r}
                 $$
             </p>
             <p>Here \(r\) is the distance from the entrance and exit points. \(\ell\) is the mean free path which essentially controls how far the light scatters under the surface before reemerging. \(s\) is the shape parameter, defined as</p>
@@ -204,11 +225,15 @@
                     <em>I’ll explain how to sample the diffusion profile’s CDF in the upcoming section.</em>
                   </div>
                 </li>
-                <li>Cast a probe ray at that point, parallel to the normal, whose length is based on the size of the sphere.</li>
+                <li>Cast a probe ray at that point, parallel to the normal, whose length reaches the size of the sphere.</li>
+                <div style="margin-left:1.5em; color:#797979; font-size:0.97em;">
+                    <em>I’ll explain how to create this ray in the upcoming section.</em>
+                  </div>
                 <li>Gather every intersection in a linked list, and remove any that are not apart of the model. (For example, a wall near the model.)</li>
                 <li>Uniformly choose a random intersection point. Get the normal and position of that intersection. That is your <span style="white-space:nowrap;">\(p_i\)</span>.</li>
             </ol>
-            <h2>Sampling on a Disk with Burley's Diffusion Profile</h2>
+            <img src="../images/sampleRadius.png" alt="sampling method"width="600" height="350">
+            <h3>Sampling on a Disk with Burley's Diffusion Profile</h3>
             <p>Previously I mentioned we must choose a point on that disk based on the diffusion profile's CDF. This is the importance sampling part. Essentially, we want to pick points on the disk that give the most contribution to our evaluation of <span style="white-space:nowrap;">\(R(r)\)</span>.</p>
             <p>Burley provided us with a perfect CDF in the paper:</p>
             <p>
@@ -249,11 +274,45 @@
 </code></pre>
             <p>Even though this function also nicely provides a PDF, we won't use it so we can use our own for clarity. But by all means, if you don't mind, you can use the one returned by the function.</p>
             <p>Once you have that radial distance \(r\), draw a random \(\phi \in [0, 2\pi]\) uniformly for the azimuthal angle on the disk. You have now successfully sampled a point on the disk in polar coordinates \(p(r, \phi)\).</p>
-            <p>You can convert this into a world space vector as
+            <p>You can convert this into a tangent space vector as:
                 \[
-                r (\cos(\phi)\, \mathbf{T} + \sin(\phi)\, \mathbf{B})
+                p_{offset} = r (\cos(\phi)\, \mathbf{T} + \sin(\phi)\, \mathbf{B})
                 \]
             where \(\mathbf{T}\) and \(\mathbf{B}\) are the tangent and bitangent vectors of the disk's plane.</p>
+            <h3>Creating the Energy Sphere</h3>
+            <p>To create a sphere with radius \(r\) that encapsulates 99.9% of energy, we can simply sample the above mentioned routine with \(u = 0.999\).</p>
+            <h3>Creating the Probe Ray</h3>
+            <p>As mentioned previously, we want to probe our scene based on the point on our disk. This ray will have length:</p>
+            <p>
+                $$
+                l = 2\sqrt{r_{max}^2 - r^2}
+                $$
+            </p>
+            <p>This is essentially the point on our disk, projected onto the top and bottom of our energy sphere. The direction of this ray will 
+                be exactly the direction of the surface normal \(n_o\) at \(p_o\). 
+                <div style="margin-left:1.5em; color:#797979; font-size:0.97em;">
+                    <em>
+                        Note that PBRT actually chooses a projection axis of \(p_o\)'s normal for the direction of the ray which decreases variance
+                        in sharp peaks where the dot product is close to 0. I choose to not do this just to simplify the math going forward, but please refer to 
+                        <a href="https://pbr-book.org/3ed-2018/Light_Transport_II_Volume_Rendering/Sampling_Subsurface_Reflection_Functions" target="_blank" rel="noopener noreferrer">pbrt 15.4.1</a>
+                        for more info on that strategy.
+                    </em>
+                </div>
+            </p>
+            <p>The position of the ray will therefore be: </p>
+            <p>
+                $$
+                p_{ray} = p_o + p_{offset} - n_o(\frac{l}{2}) 
+                $$
+            </p>
+            <p>This is much easier to visualize, so heres a very nice illustration courtesy of 
+            <a href="https://gao-duan.github.io/blogs/bssrdf/index.html" target="_blank" rel="noopener noreferrer">Duan Gao</a>
+            :
+            </p>
+            <img src="../images/rayProbe.png" alt="ray probe image"width="600" height="400">
+            <p>The bottom black dot (labelled "target") is \(p_{ray}\), the orange dot is \(p_o\), and the blue dot is \(p_{offset}\). 
+                Hopefully it is clear why we need the \(n_o(\frac{l}{2})\) term for \(p_{ray}\). <em>(It moves it down to the edge of the sphere.)<em>
+            </p>
         </div>
     </div>
 </body>
