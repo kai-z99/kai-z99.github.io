@@ -205,10 +205,15 @@
             <p>The effective albedo is defined as</p>
             <p>
                 $$
-                \rho_{\mathrm{eff}} = \int_0^{2\pi} \int_0^{\infty} r S_r(r) \, dr \, d\phi = 2\pi \int_0^{\infty} r S_r(r) \, dr.
+                \rho_{\mathrm{eff}} = \int_0^{2\pi} \int_0^{\infty} r S_r(r) \, dr \, d\phi
                 $$
             </p>
             <p>Luckily for us, Burley's diffusion profile is normalized, meaning this simply integrates to \(A\).</p>
+            <p>
+                $$
+                \rho_{eff} = \int_{0}^{2\pi}\int_{0}^{\infty}{rR(r) drd \phi} = A
+                $$
+            </p>
             <h2>Importance Sampling</h2>
             <p>The next question is, how do we decide our enter and exit points \(p_i\), \(p_o\) to evaluate the separable BSSRDF? We need to use importance sampling. Essentially I will describe a simplified version of the disk sampling described in <a href="https://pbr-book.org/3ed-2018/Light_Transport_II_Volume_Rendering/Sampling_Subsurface_Reflection_Functions" target="_blank" rel="noopener noreferrer">pbrt 15.4</a>.</p>
             <p>So let's say you shoot a ray into the scene, it intersects a surface and passes the <span style="white-space:nowrap;">\((1 - F(\omega_o))\)</span> test, meaning it has entered the surface</p>
@@ -231,6 +236,10 @@
                   </div>
                 <li>Gather every intersection in a linked list, and remove any that are not apart of the model. (For example, a wall near the model.)</li>
                 <li>Uniformly choose a random intersection point. Get the normal and position of that intersection. That is your <span style="white-space:nowrap;">\(p_i\)</span>.</li>
+                <li>Sample from a diffuse lobe at \(p_i\) to get the incoming direction \(w_i\).</li>
+                <div style="margin-left:1.5em; color:#797979; font-size:0.97em;">
+                    <em>More detail on this in upcoming section.</em>
+                  </div>
             </ol>
             <img src="../images/sampleRadius.png" alt="sampling method"width="600" height="350">
             <h3>Sampling on a Disk with Burley's Diffusion Profile</h3>
@@ -280,7 +289,7 @@
                 \]
             where \(\mathbf{T}\) and \(\mathbf{B}\) are the tangent and bitangent vectors of the disk's plane.</p>
             <h3>Creating the Energy Sphere</h3>
-            <p>To create a sphere with radius \(r\) that encapsulates 99.9% of energy, we can simply sample the above mentioned routine with \(u = 0.999\).</p>
+            <p>To create a sphere with radius \(r\) that encapsulates 99.9% of the energy of \(R(r)\), we can simply sample the above mentioned routine with \(u = 0.999\).</p>
             <h3>Creating the Probe Ray</h3>
             <p>As mentioned previously, we want to probe our scene based on the point on our disk. This ray will have length:</p>
             <p>
@@ -311,7 +320,43 @@
             </p>
             <img src="../images/rayProbe.png" alt="ray probe image"width="600" height="400">
             <p>The bottom black dot (labelled "target") is \(p_{ray}\), the orange dot is \(p_o\), and the blue dot is \(p_{offset}\). 
-                Hopefully it is clear why we need the \(n_o(\frac{l}{2})\) term for \(p_{ray}\). <em>(It moves it down to the edge of the sphere.)<em>
+                Hopefully it is clear why we need the \(n_o(\frac{l}{2})\) term for \(p_{ray}\). 
+                <em>(It moves it down to the edge of the sphere.)</em>
+            </p>
+            <h3>Getting The Exit Direction \(\omega_i\)</h3>
+            <p>
+                Once we have our entrance point \(p_i\), we can decide the direction on it by simply sampling a lambertian lobe at \(p_i\).
+                Make sure to save the pdf as this is actually \(p(\omega_i)\) described in our estimator.
+            </p>
+            <div style="margin-left:1.5em; color:#797979; font-size:0.97em;">
+                <em>
+                    Technically, youre free to sample any lobe as long as you provide the correct pdf. The BSSRDF happens to have an
+                    angular term which is why lambertian is optimal.
+                </em>
+            </div>
+        
+            <h3>Resolving PDFs \(p(\omega_i)\) and \(p(p_i)\)</h3>
+            <p>Recall our monte carlo estimator:</p>
+            <p>
+                $$
+                L_o(p_o, \omega_o) \approx (1 - F(\omega_o))\frac{1}{N}\sum_{i=1}^{N}{\frac{ L_i(p_o, \omega_i) S_p(p_o, p_i) S_\omega(\omega_i) (\omega_i \cdot n_i)}{p(\omega_i)p(p_i)}}
+                $$
+            </p>
+
+            <p>We need to find the correct PDFs now; \(p(p_i)\) to account for the chance of picking our entrance point, and \(p(\omega_i\))
+                 to account the incoming lights direction. 
+            </p>
+            <p>As discussed earlier, \(p(\omega_i\)) is exactly the pdf for a lambertian sample: </p>
+            <p>
+                $$
+                p(\omega_i) = \frac{cos(\theta_i)}{\pi}
+                $$
+            </p>
+            <p>Since R(r) is normalized, we get a really nice fact: </p>
+            <p>
+                $$
+                \int_{0}^{\infty}\int_{0}^{2\pi}{R(r)rd \phi dr} = A
+                $$
             </p>
         </div>
     </div>
