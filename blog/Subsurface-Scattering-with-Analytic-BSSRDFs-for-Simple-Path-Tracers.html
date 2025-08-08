@@ -64,46 +64,43 @@
         <a href="index.html" class="back-link">&larr; Back to Blog</a>
         <h1>Subsurface Scattering with Analytic BSSRDFs for Simple Path Tracers</h1>
         <div class="post-meta" style="margin-bottom:1.5em;">By Kai Zhang</div>
-        <img id="toggle-image" src="../images/xyz10000spp7.0-0.2.png" alt="XYZ Dragon 7.0" style="display:block; margin: 0 auto 1em auto; max-width: 100%; border-radius: 8px;">
-        <button id="toggle-image-btn" style="display:block; margin: 0 auto 2em auto; padding: 0.5em 1.2em; font-size:1em; border-radius:6px; border:1px solid #ccc; background:#f5f5f5; cursor:pointer;">Show SSS off</button>
+        
+        <img id="toggle-image" src="../images/xyz10000spp7.0-0.2NEW.png" alt="XYZ Dragon SSS High"
+             style="display:block; margin: 0 auto 1em auto; max-width: 100%; border-radius: 8px;">
+        
+        <div style="display:flex; gap:.5em; justify-content:center; margin-bottom:2em;">
+          <button class="img-swap" data-src="../images/xyz10000spp10.0-0.2NEW.png" data-alt="XYZ Dragon SSS High">
+            SSS High Scattering
+          </button>
+          <button class="img-swap" data-src="../images/xyz10000spp1.1-0.2NEW.png" data-alt="XYZ Dragon SSS Medium">
+            SSS Med Scattering
+          </button>
+          <button class="img-swap" data-src="../images/xyz10000spp0.1-0.2NEW.png" data-alt="XYZ Dragon SSS Low">
+            SSS Low Scattering
+          </button>
+        </div>
+        
         <script>
-            const img = document.getElementById('toggle-image');
-            const btn = document.getElementById('toggle-image-btn');
-          
-            // 1) Define your three states:
-            const states = [
-              {
-                src: '../images/xyz10000spp7.0-0.2.png',
-                alt: 'XYZ Dragon SSS On',
-                nextText: 'Show SSS Low Scattering'
-              },
-              {
-                src: '../images/xyz10000spp0.1-0.2.png',
-                alt: 'XYZ Dragon SSS Off',
-                nextText: 'Show Lambert'
-              },
-              {
-                src: '../images/xyz10000spplambert.png',      // <-- Your third “Lambert” image here
-                alt: 'XYZ Dragon Lambert',
-                nextText: 'Show SSS High Scattering'
-              }
-            ];
-          
-            // 2) Start at state 0
-            let stateIndex = 0;
-            // (Optional) override the button text to match your HTML default
-            btn.textContent = states[stateIndex].nextText;
-          
+          const img = document.getElementById('toggle-image');
+          const buttons = document.querySelectorAll('.img-swap');
+        
+          function setActive(btn) {
+            buttons.forEach(b => b.disabled = false);
+            btn.disabled = true; // simple "active" state
+          }
+        
+          buttons.forEach(btn => {
             btn.addEventListener('click', () => {
-              // advance to the next state (wrap around)
-              stateIndex = (stateIndex + 1) % states.length;
-          
-              // update image and button
-              img.src         = states[stateIndex].src;
-              img.alt         = states[stateIndex].alt;
-              btn.textContent = states[stateIndex].nextText;
+              img.src = btn.dataset.src;
+              img.alt = btn.dataset.alt || '';
+              setActive(btn);
             });
-          </script>
+          });
+        
+          // mark the first one active on load (matches initial <img> src)
+          setActive(buttons[0]);
+        </script>
+        
         <div class="post-content">
             <p>I've been implementing a simple energy conserving path tracer and wanted to add subsurface scattering to it and I found most sources to be scattered. If you want to implement a simple, physically based SSS into your path tracer, I hope I can help.</p>
             <p>In SSS, light enters a point on a surface, then re-emerged at a point that may or may not be where it first entered. Looking at the rendering equation:</p>
@@ -251,13 +248,14 @@
                     <em>Explanation on how to get radius of this sphere in upcoming section.</em>
                   </div>
                 </li>
-                <li>Create a disk that is tangent to the surface and has the radius which is the same as the max energy sphere.</li>
+                <li>Choose an orthonormal basis randomly.</li>
+                <li>Create a disk that is tangent to the basis's normal (lets call it \(n_{axis}\)) and has the radius which is the same as the max energy sphere.</li>
                 <li>Choose a point on that disk based on the diffusion profile's CDF.
                   <div style="margin-left:1.5em; color:#797979; font-size:0.97em;">
                     <em>I’ll explain how to sample the diffusion profile’s CDF in the upcoming section.</em>
                   </div>
                 </li>
-                <li>Cast a probe ray at that point, parallel to the normal, whose length reaches the size of the sphere.</li>
+                <li>Cast a probe ray at that point, parallel to the \(n_{axis}\), whose length reaches the size of the sphere.</li>
                 <div style="margin-left:1.5em; color:#797979; font-size:0.97em;">
                     <em>I’ll explain how to create this ray in the upcoming section.</em>
                   </div>
@@ -325,20 +323,12 @@
                 $$
             </p>
             <p>This is essentially the point on our disk, projected onto the top and bottom of our energy sphere. The direction of this ray will 
-                be exactly the direction of the surface normal \(n_o\) at \(p_o\). 
-                <div style="margin-left:1.5em; color:#797979; font-size:0.97em;">
-                    <em>
-                        Note that PBRT actually chooses a projection axis of \(p_o\)'s normal for the direction of the ray which decreases variance
-                        in sharp peaks where the dot product is close to 0. I choose to not do this just to simplify the math going forward, but please refer to 
-                        <a href="https://pbr-book.org/3ed-2018/Light_Transport_II_Volume_Rendering/Sampling_Subsurface_Reflection_Functions" target="_blank" rel="noopener noreferrer">pbrt 15.4.1</a>
-                        for more info on that strategy.
-                    </em>
-                </div>
+                be the direction of your orthonormal basis' normal, \(n_{axis}\). 
             </p>
             <p>The position of the ray will therefore be: </p>
             <p>
                 $$
-                p_{ray} = p_o + p_{offset} - n_o(\frac{l}{2}) 
+                p_{ray} = p_o + p_{offset} - n_{axis}(\frac{l}{2}) 
                 $$
             </p>
             <p>This is much easier to visualize, so heres a very nice illustration courtesy of 
@@ -347,7 +337,7 @@
             </p>
             <img src="../images/rayProbe.png" alt="ray probe image"width="600" height="400">
             <p>The bottom black dot (labelled "target") is \(p_{ray}\), the orange dot is \(p_o\), and the blue dot is \(p_{offset}\). 
-                Hopefully it is clear why we need the \(n_o(\frac{l}{2})\) term for \(p_{ray}\). 
+                Hopefully it is clear why we need the \(n_{axis}(\frac{l}{2})\) term for \(p_{ray}\). 
                 <em>(It moves it down to the edge of the sphere.)</em>
             </p>
             <h3>Getting The Exit Direction \(\omega_i\)</h3>
