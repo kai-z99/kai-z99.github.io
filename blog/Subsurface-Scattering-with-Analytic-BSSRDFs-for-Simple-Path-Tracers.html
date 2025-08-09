@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,28 +14,33 @@
             margin: 0;
             padding: 0;
         }
+
         .container {
             max-width: 700px;
             margin: 60px auto 0 auto;
             padding: 32px 24px;
             background: #fff;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
             border-radius: 8px;
         }
+
         h1 {
             font-size: 2.2rem;
             margin-bottom: 0.5em;
             font-weight: 600;
         }
+
         .post-meta {
             color: #888;
             font-size: 1rem;
             margin-bottom: 2em;
         }
+
         .post-content {
             font-size: 1.15rem;
             line-height: 1.7;
         }
+
         a.back-link {
             display: inline-block;
             margin-bottom: 2em;
@@ -42,9 +48,11 @@
             text-decoration: none;
             font-size: 1rem;
         }
+
         a.back-link:hover {
             text-decoration: underline;
         }
+
         pre code {
             display: block;
             background: #f5f5f5;
@@ -57,74 +65,111 @@
             max-width: 100%;
             box-sizing: border-box;
         }
+
+        .media {
+            margin: 0 auto 1em;
+            text-align: center;
+            max-width: min(100%, 900px);
+        }
+
+        .media img {
+            display: block;
+            margin: 0 auto;
+            max-width: 100%;
+            border-radius: 8px;
+        }
+
+        .media figcaption {
+            color: #797979;
+            font-size: 0.85em;
+            font-style: italic;
+            margin-top: .5em;
+        }
     </style>
 </head>
+
 <body>
     <div class="container">
         <a href="index.html" class="back-link">&larr; Back to Blog</a>
         <h1>Subsurface Scattering with Analytic BSSRDFs for Simple Path Tracers</h1>
         <div class="post-meta" style="margin-bottom:1.5em;">By Kai Zhang</div>
-        
-        <img id="toggle-image" src="../images/xyz10000spp7.0-0.2NEW.png" alt="XYZ Dragon SSS High"
-             style="display:block; margin: 0 auto 1em auto; max-width: 100%; border-radius: 8px;">
-        
+
+        <figure class="media">
+            <img id="toggle-image" src="../images/xyz10000spp10.0-0.2NL.png" alt="XYZ Dragon SSS High">
+            <figcaption>
+              XYZ dragon (350 cm) rendered with different mean free path values.
+              Overhead area light emitted radiance \(L_e = 8\); sky radiance \(L_{\text{sky}} = (0.49, 0.56, 0.70)\).
+            </figcaption>
+        </figure>
+
         <div style="display:flex; gap:.5em; justify-content:center; margin-bottom:2em;">
-          <button class="img-swap" data-src="../images/xyz10000spp10.0-0.2NEW.png" data-alt="XYZ Dragon SSS High">
-            SSS High Scattering
-          </button>
-          <button class="img-swap" data-src="../images/xyz10000spp1.1-0.2NEW.png" data-alt="XYZ Dragon SSS Medium">
-            SSS Med Scattering
-          </button>
-          <button class="img-swap" data-src="../images/xyz10000spp0.1-0.2NEW.png" data-alt="XYZ Dragon SSS Low">
-            SSS Low Scattering
-          </button>
+            <button class="img-swap" data-src="../images/xyz10000spp10.0-0.2NL.png" data-alt="XYZ Dragon SSS High">
+                \(\ell = 10.0\)
+            </button>
+            <button class="img-swap" data-src="../images/xyz10000spp1.1-0.2NEW.png" data-alt="XYZ Dragon SSS Medium">
+                \(\ell = 1.0\)
+            </button>
+            <button class="img-swap" data-src="../images/xyz10000spp0.1-0.2NEW.png" data-alt="XYZ Dragon SSS Low">
+                \(\ell = 0.1\)
+            </button>
         </div>
-        
+
         <script>
-          const img = document.getElementById('toggle-image');
-          const buttons = document.querySelectorAll('.img-swap');
-        
-          function setActive(btn) {
-            buttons.forEach(b => b.disabled = false);
-            btn.disabled = true; // simple "active" state
-          }
-        
-          buttons.forEach(btn => {
-            btn.addEventListener('click', () => {
-              img.src = btn.dataset.src;
-              img.alt = btn.dataset.alt || '';
-              setActive(btn);
+            const img = document.getElementById('toggle-image');
+            const buttons = document.querySelectorAll('.img-swap');
+
+            function setActive(btn) {
+                buttons.forEach(b => b.disabled = false);
+                btn.disabled = true; // simple "active" state
+            }
+
+            buttons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    img.src = btn.dataset.src;
+                    img.alt = btn.dataset.alt || '';
+                    setActive(btn);
+                });
             });
-          });
-        
-          // mark the first one active on load (matches initial <img> src)
-          setActive(buttons[0]);
+
+            // mark the first one active on load (matches initial <img> src)
+            setActive(buttons[0]);
         </script>
-        
+
         <div class="post-content">
-            <p>I've been implementing a simple energy conserving path tracer and wanted to add subsurface scattering to it and I found most sources to be scattered. If you want to implement a simple, physically based SSS into your path tracer, I hope I can help.</p>
-            <p>In SSS, light enters a point on a surface, then re-emerged at a point that may or may not be where it first entered. Looking at the rendering equation:</p>
+            <p>I've been implementing a simple energy conserving path tracer and wanted to add subsurface scattering to
+                it but I didn't find any tutorials for it. If you want to implement a simple, physically based SSS into
+                your path tracer, I hope I can help.</p>
+            <p>In SSS, light enters a point on a surface, then re-emerged at a point that may or may not be where it
+                first entered. Looking at the rendering equation:</p>
             <p>
                 $$
-                L_o(p_o, \omega_o) = \int_{\Omega} f_r(p_o, \omega_i, \omega_o) L_i(p_o, \omega_i) (\omega_i \cdot n_i) d\omega_i
+                L_o(p_o, \omega_o) = \int_{\Omega} f_r(p_o, \omega_i, \omega_o) L_i(p_o, \omega_i) (\omega_i \cdot n_i)
+                d\omega_i
                 $$
             </p>
             <p>The monte carlo estimator is:</p>
             <p>
                 $$
-                L_o(p_o, \omega_o) \approx \frac{1}{N}\sum_{i=1}^{N}{\frac{f_r(p_o, \omega_i, \omega_o) L_i(p_o, \omega_i) (\omega_i \cdot n_i)}{p(\omega_i)}}
+                L_o(p_o, \omega_o) \approx \frac{1}{N}\sum_{i=1}^{N}{\frac{f_r(p_o, \omega_i, \omega_o) L_i(p_o,
+                \omega_i) (\omega_i \cdot n_i)}{p(\omega_i)}}
                 $$
             </p>
 
 
-            <p>We can see that it only supports light entering and exiting at one point. Therefore we to use the BSSRDF:</p>
+            <p>We can see that it only supports light entering and exiting at one point. Therefore we to use the BSSRDF:
+            </p>
             <p>
                 $$
-                L_o(p_o, \omega_o) = \int_A \int_{\Omega} S(p_o, \omega_o, p_i, \omega_i) L_i(p_o, \omega_i) (\omega_i \cdot n_i) d\omega_i dA
+                L_o(p_o, \omega_o) = \int_A \int_{\Omega} S(p_o, \omega_o, p_i, \omega_i) L_i(p_o, \omega_i) (\omega_i
+                \cdot n_i) d\omega_i dA
                 $$
             </p>
-            <p>As you can see, not only do we have a hemisphere around our point but we must also consider the area surrounding it.</p>
-            <p>Of course the integral in this form is quite difficult to evaluate. Luckily in 2001, <a href="http://www.graphics.stanford.edu/papers/bssrdf/bssrdf.pdf" target="_blank" rel="noopener noreferrer">Jensen et al proposed a more manageable form</a> of the BSSRDF term called the separable BSSRDF:</p>
+            <p>As you can see, not only do we have a hemisphere around our point but we must also consider the area
+                surrounding it.</p>
+            <p>Of course the integral in this form is quite difficult to evaluate. Luckily in 2001, <a
+                    href="http://www.graphics.stanford.edu/papers/bssrdf/bssrdf.pdf" target="_blank"
+                    rel="noopener noreferrer">Jensen et al proposed a more manageable form</a> of the BSSRDF term called
+                the separable BSSRDF:</p>
             <p>
                 $$
                 S(p_o, \omega_o, p_i, \omega_i) = (1 - F(\omega_o)) S_p(p_o, p_i) S_\omega(\omega_i)
@@ -133,34 +178,42 @@
             <p>Therefore the rendering equation becomes:</p>
             <p>
                 $$
-                L_o(p_o, \omega_o) = (1 - F(\omega_o))\int_{A} S_p(p_o, p_i) \int_{\Omega}S_{\omega}(\omega_i)(\omega_i \cdot n_i) d\omega_idA
+                L_o(p_o, \omega_o) = (1 - F(\omega_o))\int_{A} S_p(p_o, p_i) \int_{\Omega}S_{\omega}(\omega_i)(\omega_i
+                \cdot n_i) d\omega_idA
                 $$
             </p>
             <p>Then the monte carlo estimator is:</p>
             <p>
                 $$
-                L_o(p_o, \omega_o) \approx (1 - F(\omega_o))\frac{1}{N}\sum_{i=1}^{N}{\frac{ L_i(p_o, \omega_i) S_p(p_o, p_i) S_\omega(\omega_i) (\omega_i \cdot n_i)}{p(\omega_i)p(p_i)}}
+                L_o(p_o, \omega_o) \approx (1 - F(\omega_o))\frac{1}{N}\sum_{i=1}^{N}{\frac{ L_i(p_o, \omega_i) S_p(p_o,
+                p_i) S_\omega(\omega_i) (\omega_i \cdot n_i)}{p(\omega_i)p(p_i)}}
                 $$
             </p>
             <p>I will now explain how to integrate each term into your Monte Carlo path tracer.</p>
             <div style="margin-top:2em;">\((1 - F(\omega_o))\)</div>
-            <p>This term essentially accounts for whether the light actually enters the surface and scatters. So it is actually just your BSDF's chance of transmission with \(\omega_o\). If its true, we evaulate the BSSRDF.</p>
-            <p>If you dont have a full BSDF system, draw a random number uniformly \(u_1 \in [0, 1]\) and test \(u_1 < 1 - F(\omega_o)\). If it fails, simply fall back to something like a reflection lobe. Otherwise we evaulate the BSSRDF.</p>
-            <div style="margin-top:2em;">\(S_\omega(\omega_i)\)</div>
-            <p>This term accounts for the energy loss when the ray exits the surface. Here is the function (from <a href="https://pbr-book.org/3ed-2018/Volume_Scattering/The_BSSRDF" target="_blank" rel="noopener noreferrer">pbrt 11.7</a>):</p>
-            <p>
-                $$
-                S_\omega(\omega_i) = \frac{1 - F_r(\cos \theta_i)}{c \pi}
-                $$
+            <p>This term essentially accounts for whether the light actually enters the surface and scatters. So it is
+                actually just your BSDF's chance of transmission with \(\omega_o\). If its true, we evaulate the BSSRDF.
             </p>
-            <p>where</p>
-            <p>
-                $$
-                c = 1 - 2 \int_0^{\frac{\pi}{2}} F_r(\eta, \cos \theta) \sin \theta \cos \theta \, d\theta
-                $$
-            </p>
-            <p>This integral can be precomputed using this function:</p>
-            <pre><code>__device__ inline float FresnelMoment1(float invEta)
+            <p>If you dont have a full BSDF system, draw a random number uniformly \(u_1 \in [0, 1]\) and test \(u_1 < 1
+                    - F(\omega_o)\). If it fails, simply fall back to something like a reflection lobe. Otherwise we
+                    evaulate the BSSRDF.</p>
+                    <div style="margin-top:2em;">\(S_\omega(\omega_i)\)</div>
+                    <p>This term accounts for the energy loss when the ray exits the surface. Here is the function (from
+                        <a href="https://pbr-book.org/3ed-2018/Volume_Scattering/The_BSSRDF" target="_blank"
+                            rel="noopener noreferrer">pbrt 11.7</a>):</p>
+                    <p>
+                        $$
+                        S_\omega(\omega_i) = \frac{1 - F_r(\cos \theta_i)}{c \pi}
+                        $$
+                    </p>
+                    <p>where</p>
+                    <p>
+                        $$
+                        c = 1 - 2 \int_0^{\frac{\pi}{2}} F_r(\eta, \cos \theta) \sin \theta \cos \theta \, d\theta
+                        $$
+                    </p>
+                    <p>This integral can be precomputed using this function:</p>
+                    <pre><code>__device__ inline float FresnelMoment1(float invEta)
 {
     float e = invEta;
     float e2 = e * e, e3 = e2 * e, e4 = e2 * e2, e5 = e3 * e2;
@@ -170,112 +223,147 @@
         return -4.61686f + 11.1136f * e - 10.4646f * e2 + 5.11455f * e3 - 1.27198f * e4 + 0.12746f * e5;
 }
 </code></pre>
-            <p>Please refer to <a href="https://pbr-book.org/3ed-2018/Volume_Scattering/The_BSSRDF#SeparableBSSRDFs" target="_blank" rel="noopener noreferrer">pbrt 11.4.3</a> for derivation.</p>
-            <div style="margin-top:2em;">\(S_p(p_o, p_i)\)</div>
-            <p>This term is the spatial term and accounts for energy when the light scatters under the surface. We make the simplifying assumption:</p>
-            <p>
-                $$
-                S_p(p_o, p_i) \approx S_r(\|p_o - p_i\|)
-                $$
-            </p>
-            <p>So that the only factor affecting this term is the distance between the entrance and exit of the light. There are different variations of diffusion profiles, which generally are functions that approximate \(S_p\). I decided to use <a href="https://graphics.pixar.com/library/ApproxBSSRDF/paper.pdf" target="_blank" rel="noopener noreferrer">this one described by Brent Burley et al. in 2015</a>:</p>
-            <p>
-                $$
-                S_r(\|p_o - p_i\|) \approx R(r) = A s \frac{e^{-sr/\ell} + e^{-sr/(3\ell)}}{8 \pi \ell r}
-                $$
-            </p>
-            <p>Here \(r\) is the distance from the entrance and exit points. \(\ell\) is the user controlled the mean free path which essentially controls how far the light scatters under the surface before reemerging.</p>
-            <p>\(A\) in the diffusion profile represents our user defined material albedo.</p>
-            <div style="margin-left:1.5em; color:#797979; font-size:0.85em;">
-                <em>Technically, \(A\) actually is a 1-1 mapping for \(\rho_{eff}\), the effective albedo, as described in 
-                    <a href="https://www.pbr-book.org/3ed-2018/Volume_Scattering/The_BSSRDF#eq:bssrdf-effective-albedo" target="_blank" rel="noopener noreferrer">pbrt 11.11</a>.
-                    Effective albedo, as pbrt states, is "the material’s overall albedo", seperate from \(\rho\), the single scattering albedo. Effective albedo is defined as:
-                <p>
-                    $$
-                    \rho_{eff} = \int_{0}^{2\pi}\int_{0}^{\infty}{rS_r(r) drd \phi}
-                    $$
-                </p>
-                <p>Where \(S_r(r)\) is the diffusion profile. For Burley's profile:</p>
-                <p>
-                    $$
-                    \rho_{eff} = \int_{0}^{2\pi}\int_{0}^{\infty}{rR(r) drd \phi} = \int_{0}^{2\pi}\int_{0}^{\infty}{rAR'(r) drd \phi}
-                    $$
-                </p>
-                <p>Where</p>
-                <p>
-                    $$
-                    R'(r) = s \frac{e^{-sr/\ell} + e^{-sr/(3\ell)}}{8 \pi \ell r}
-                    $$
-                </p>
-                <p>Since \(R'(r)\) is normalized:</p>
-                <p>
-                    $$
-                    \int_{0}^{2\pi}\int_{0}^{\infty}{rR'(r) drd \phi} = 1
-                    $$
-                </p>
-                <p>So it follows that:</p>
-                <p>
-                    $$
-                    \rho_{eff} = \int_{0}^{2\pi}\int_{0}^{\infty}{rAR'(r) drd \phi} = A
-                    $$
-                </p>
-                <p>Essentially what this means is that whatever you set \(A\) to, the materials effective albedo will be exactly that visually, which is good for artists.</p>
-                </em>
-              </div>
-                 
+                    <p>Please refer to <a
+                            href="https://pbr-book.org/3ed-2018/Volume_Scattering/The_BSSRDF#SeparableBSSRDFs"
+                            target="_blank" rel="noopener noreferrer">pbrt 11.4.3</a> for derivation.</p>
+                    <div style="margin-top:2em;">\(S_p(p_o, p_i)\)</div>
+                    <p>This term is the spatial term and accounts for energy when the light scatters under the surface.
+                        We make the simplifying assumption:</p>
+                    <p>
+                        $$
+                        S_p(p_o, p_i) \approx S_r(\|p_o - p_i\|)
+                        $$
+                    </p>
+                    <p>So that the only factor affecting this term is the distance between the entrance and exit of the
+                        light. There are different variations of diffusion profiles, which generally are functions that
+                        approximate \(S_p\). I decided to use <a
+                            href="https://graphics.pixar.com/library/ApproxBSSRDF/paper.pdf" target="_blank"
+                            rel="noopener noreferrer">this one described by Disney.</a>:</p>
+                    <p>
+                        $$
+                        S_r(\|p_o - p_i\|) \approx R'(r) = s \frac{e^{-sr/\ell} + e^{-sr/(3\ell)}}{8 \pi \ell r}
+                        $$
+                    </p>
+                    <div style="margin-left:1.5em; color:#797979; font-size:0.85em;">
+                        <em>Note that the diffusion profile is normalized, therefore:
+                            <p>
+                                $$
+                                \int_{0}^{2\pi}\int_{0}^{\infty}{rR'(r) drd \phi} = 1
+                                $$
+                            </p>
+                        </em>
+                    </div>
+                    <p>Since we want to express it with meaningful physical properties, Disney gave it some params:</p>
+                    <p>
+                        $$
+                        R(r) = A s \frac{e^{-sr/\ell} + e^{-sr/(3\ell)}}{8 \pi \ell r}
+                        $$
+                    </p>
+                    <p>Here \(r\) is the distance from the entrance and exit points.</p>
+                    <p> \(\ell\) is the user controlled mean free path which essentially is the average distance the
+                        light ray travels between scattering events in the medium.</p>
+                    <p>\(A\) in the diffusion profile represents our user defined material albedo.</p>
+                    <div style="margin-left:1.5em; color:#797979; font-size:0.85em;">
+                        <em>Technically, \(A\) actually is a 1-1 mapping for \(\rho_{eff}\), the effective albedo, as
+                            described in
+                            <a href="https://www.pbr-book.org/3ed-2018/Volume_Scattering/The_BSSRDF#eq:bssrdf-effective-albedo"
+                                target="_blank" rel="noopener noreferrer">pbrt 11.11</a>.
+                            Effective albedo, as pbrt states, is "the material’s overall albedo", seperate from
+                            \(\rho\), the single scattering albedo. Effective albedo is defined as:
+                            <p>
+                                $$
+                                \rho_{eff} = \int_{0}^{2\pi}\int_{0}^{\infty}{rS_r(r) drd \phi}
+                                $$
+                            </p>
+                            <p>Where \(S_r(r)\) is the diffusion profile. For Burley's profile:</p>
+                            <p>
+                                $$
+                                \rho_{eff} = \int_{0}^{2\pi}\int_{0}^{\infty}{rR(r) drd \phi} =
+                                \int_{0}^{2\pi}\int_{0}^{\infty}{rAR'(r) drd \phi} =
+                                A\int_{0}^{2\pi}\int_{0}^{\infty}{rR'(r) drd \phi}
+                                $$
+                            </p>
+                            <p>Since \(R'(r)\) is normalized:</p>
+                            <p>
+                                $$
+                                \int_{0}^{2\pi}\int_{0}^{\infty}{rR'(r) drd \phi} = 1
+                                $$
+                            </p>
+                            <p>So it follows that:</p>
+                            <p>
+                                $$
+                                \rho_{eff} = A
+                                $$
+                            </p>
+                            <p>Essentially what this means is that whatever you set \(A\) to, the materials effective
+                                albedo will be exactly that, which is good for artists.</p>
+                        </em>
+                    </div>
+
             </p>
             <p> Finally, \(s\) is the shape parameter, defined as</p>
             <p style="text-align:center; margin: 1.5em 0;">
                 $$
-                s = 1.85 - A + 7|A - 0.8|^3
+                s = 1.85 - A_{channel} + 7|A_{channel} - 0.8|^3
                 $$
             </p>
-            <p>Note that since albedo is usually a <code>vec3</code>, I chose to approximate it with a luminance function:</p>
-            <pre style="margin: 1.5em 0;"><code>__device__ inline float Luminance(const glm::vec3& col)
-{
-    const glm::vec3 lumaWeights(0.2126f, 0.7152f, 0.0722f);
-    return glm::dot(col, lumaWeights);
-}
-</code></pre>
-            <p>This is purely an artistic choice, so you can define it however you want, as long as \(s > 0\).</p>
+            <p>\(A_{channel}\) is the rgb channel that is randomly selected when sampling. More info on this in the next
+                section.</p>
             <h2>Importance Sampling</h2>
-            <p>The next question is, how do we decide our enter and exit points \(p_i\), \(p_o\) to evaluate the separable BSSRDF? We need to use importance sampling. Essentially I will describe a simplified version of the disk sampling described in <a href="https://pbr-book.org/3ed-2018/Light_Transport_II_Volume_Rendering/Sampling_Subsurface_Reflection_Functions" target="_blank" rel="noopener noreferrer">pbrt 15.4</a>.</p>
-            <p>So let's say you shoot a ray into the scene, it intersects a surface and passes the <span style="white-space:nowrap;">\((1 - F(\omega_o))\)</span> test, meaning it has entered the surface</p>
+            <p>The next question is, how do we decide our enter and exit points \(p_i\), \(p_o\) to evaluate the
+                separable BSSRDF? We need to use importance sampling. Essentially I will describe a simplified version
+                of the disk sampling described in <a
+                    href="https://pbr-book.org/3ed-2018/Light_Transport_II_Volume_Rendering/Sampling_Subsurface_Reflection_Functions"
+                    target="_blank" rel="noopener noreferrer">pbrt 15.4</a>.</p>
+            <p>So let's say you shoot a ray into the scene, it intersects a surface and passes the <span
+                    style="white-space:nowrap;">\((1 - F(\omega_o))\)</span> test, meaning it has entered the surface
+            </p>
             <ol style="margin-left:1.5em;">
-                <li>Get the point of intersection and its normal. That is your <span style="white-space:nowrap;">\(p_o\)</span>.</li>
-                <li>Draw a sphere at that point that encapsulates 99.9% of the energy of the diffusion profile. Everything outside of it is negligible.
-                  <div style="margin-left:1.5em; color:#797979; font-size:0.97em;">
-                    <em>Explanation on how to get radius of this sphere in upcoming section.</em>
-                  </div>
+                <li>Get the point of intersection and its normal. That is your <span
+                        style="white-space:nowrap;">\(p_o\)</span>.</li>
+                <li>Choose a random axis on the orthonormal basis with chance \(T:0.25, B:0.25, N:0.5\) (let's call it
+                    \(n_{axis}\)). Randomly choose an rgb channel uniformly.</li>
+                <li>Draw a sphere at that point that encapsulates 99.9% of the energy of the diffusion profile.
+                    Everything outside of it is negligible.
+                    <div style="margin-left:1.5em; color:#797979; font-size:0.97em;">
+                        <em>Explanation on how to get radius of this sphere in upcoming section.</em>
+                    </div>
                 </li>
-                <li>Choose an orthonormal basis randomly.</li>
-                <li>Create a disk that is tangent to the basis's normal (lets call it \(n_{axis}\)) and has the radius which is the same as the max energy sphere.</li>
+                <li>Create a disk that is tangent to \(n_{axis}\) and has the radius which is the same as the max energy
+                    sphere.</li>
                 <li>Choose a point on that disk based on the diffusion profile's CDF.
-                  <div style="margin-left:1.5em; color:#797979; font-size:0.97em;">
-                    <em>I’ll explain how to sample the diffusion profile’s CDF in the upcoming section.</em>
-                  </div>
+                    <div style="margin-left:1.5em; color:#797979; font-size:0.97em;">
+                        <em>I’ll explain how to sample the diffusion profile’s CDF in the upcoming section.</em>
+                    </div>
                 </li>
-                <li>Cast a probe ray at that point, parallel to the \(n_{axis}\), whose length reaches the size of the sphere.</li>
+                <li>Cast a probe ray at that point, parallel to the \(n_{axis}\), whose length reaches the size of the
+                    sphere.</li>
                 <div style="margin-left:1.5em; color:#797979; font-size:0.97em;">
                     <em>I’ll explain how to create this ray in the upcoming section.</em>
-                  </div>
-                <li>Gather every intersection in a linked list, and remove any that are not apart of the model. (For example, a wall near the model.)</li>
-                <li>Uniformly choose a random intersection point. Get the normal and position of that intersection. That is your <span style="white-space:nowrap;">\(p_i\)</span>.</li>
+                </div>
+                <li>Gather every intersection in a linked list, and remove any that are not apart of the model. (For
+                    example, a wall near the model.)</li>
+                <li>Uniformly choose a random intersection point. Get the normal and position of that intersection. That
+                    is your <span style="white-space:nowrap;">\(p_i\)</span>.</li>
                 <li>Sample from a diffuse lobe at \(p_i\) to get the incoming direction \(w_i\).</li>
                 <div style="margin-left:1.5em; color:#797979; font-size:0.97em;">
                     <em>More detail on this in upcoming section.</em>
-                  </div>
+                </div>
             </ol>
-            <img src="../images/sampleRadius.png" alt="sampling method"width="600" height="350">
+            <img src="../images/sampleRadius.png" alt="sampling method" width="600" height="350">
             <h3>Sampling on a Disk with Burley's Diffusion Profile</h3>
-            <p>Previously I mentioned we must choose a point on that disk based on the diffusion profile's CDF. This is the importance sampling part. Essentially, we want to pick points on the disk that give the most contribution to our evaluation of <span style="white-space:nowrap;">\(R(r)\)</span>.</p>
+            <p>Previously I mentioned we must choose a point on that disk based on the diffusion profile's CDF. This is
+                the importance sampling part. Essentially, we want to pick points on the disk that give the most
+                contribution to our evaluation of <span style="white-space:nowrap;">\(R(r)\)</span>.</p>
             <p>Burley provided us with a perfect CDF in the paper:</p>
             <p>
                 $$
                 \text{CDF}(r) = 1 - \frac{1}{4} e^{-r/d} - \frac{3}{4} e^{-r/(3d)}
                 $$
             </p>
-            <p>Although the original paper claims this CDF is not analytically invertible, <a href="https://zero-radiance.github.io/post/sampling-diffusion/" target="_blank" rel="noopener noreferrer">Zero Radiance in 2019 proved it in fact was</a>:</p>
+            <p>Although the original paper claims this CDF is not analytically invertible, <a
+                    href="https://zero-radiance.github.io/post/sampling-diffusion/" target="_blank"
+                    rel="noopener noreferrer">Zero Radiance in 2019 proved it in fact was</a>:</p>
             <p style="text-align:center; margin: 1.5em 0;">
                 $$
                 x = sr = 3 \log\left(\frac{1 + G(u)^{-1/3} + G(u)^{1/3}}{4u}\right),
@@ -286,7 +374,8 @@
                 G(u) = 1 + 4u\left(2u + \sqrt{1 + 4u^2}\right)
                 $$
             </p>
-            <p>So here is the code that gives you a radial distance on the disk based on that inverse CDF (directly from Zero Radiance's Blog):</p>
+            <p>So here is the code that gives you a radial distance on the disk based on that inverse CDF (directly from
+                Zero Radiance's Blog):</p>
             <pre style="margin: 1.5em 0;"><code>__device__ inline void SampleBurleyRadius(float u, float rcpS, float& r, float& rcpPdf)
 {
     const float LOG2_E = 1.44269504089f;
@@ -303,65 +392,78 @@
     rcpPdf = (8.0f * pi * rcpS) * rcpExp;
 }
 </code></pre>
-            <p>Again, I'm using the luminance approximation to calculate <code>s</code>. Please note that the above code assumes \(\ell = 1\). To convert it to take in any \(\ell\), simply multiply:</p>
+            <p>Again, I'm using the luminance approximation to calculate <code>s</code>. Please note that the above code
+                assumes \(\ell = 1\). To convert it to take in any \(\ell\), simply multiply:</p>
             <pre style="margin: 0.5em 0 1.5em 0;"><code>r *= ell;
 </code></pre>
-            <p>Even though this function also nicely provides a PDF, we won't use it so we can use our own for clarity. But by all means, if you don't mind, you can use the one returned by the function.</p>
-            <p>Once you have that radial distance \(r\), draw a random \(\phi \in [0, 2\pi]\) uniformly for the azimuthal angle on the disk. You have now successfully sampled a point on the disk in polar coordinates \(p(r, \phi)\).</p>
+            <p>Even though this function also nicely provides a PDF, we won't use it so we can use our own for clarity.
+                But by all means, if you don't mind, you can use the one returned by the function.</p>
+            <p>Once you have that radial distance \(r\), draw a random \(\phi \in [0, 2\pi]\) uniformly for the
+                azimuthal angle on the disk. You have now successfully sampled a point on the disk in polar coordinates
+                \(p(r, \phi)\).</p>
             <p>You can convert this into a tangent space vector as:
                 \[
                 p_{offset} = r (\cos(\phi)\, \mathbf{T} + \sin(\phi)\, \mathbf{B})
                 \]
-            where \(\mathbf{T}\) and \(\mathbf{B}\) are the tangent and bitangent vectors of the disk's plane.</p>
+                where \(\mathbf{T}\) and \(\mathbf{B}\) are the tangent and bitangent vectors of the disk's plane.</p>
             <h3>Creating the Energy Sphere</h3>
-            <p>To create a sphere with radius \(r\) that encapsulates 99.9% of the energy of \(R(r)\), we can simply sample the above mentioned routine with \(u = 0.999\).</p>
+            <p>To create a sphere with radius \(r\) that encapsulates 99.9% of the energy of \(R(r)\), we can simply
+                sample the above mentioned routine with \(u = 0.999\).</p>
             <h3>Creating the Probe Ray</h3>
-            <p>As mentioned previously, we want to probe our scene based on the point on our disk. This ray will have length:</p>
+            <p>As mentioned previously, we want to probe our scene based on the point on our disk. This ray will have
+                length:</p>
             <p>
                 $$
                 l = 2\sqrt{r_{max}^2 - r^2}
                 $$
             </p>
-            <p>This is essentially the point on our disk, projected onto the top and bottom of our energy sphere. The direction of this ray will 
-                be the direction of your orthonormal basis' normal, \(n_{axis}\). 
+            <p>This is essentially the length of the point on our disk projected onto the top and bottom of our energy
+                sphere. The direction of this ray will
+                be the direction of your orthonormal basis' normal, \(n_{axis}\).
             </p>
             <p>The position of the ray will therefore be: </p>
             <p>
                 $$
-                p_{ray} = p_o + p_{offset} - n_{axis}(\frac{l}{2}) 
+                p_{ray} = p_o + p_{offset} - n_{axis}(\frac{l}{2})
                 $$
             </p>
-            <p>This is much easier to visualize, so heres a very nice illustration courtesy of 
-            <a href="https://gao-duan.github.io/blogs/bssrdf/index.html" target="_blank" rel="noopener noreferrer">Duan Gao</a>
-            :
+            <p>This is much easier to visualize, so heres a very nice illustration courtesy of
+                <a href="https://gao-duan.github.io/blogs/bssrdf/index.html" target="_blank"
+                    rel="noopener noreferrer">Duan Gao</a>
+                :
             </p>
-            <img src="../images/rayProbe.png" alt="ray probe image"width="600" height="400">
-            <p>The bottom black dot (labelled "target") is \(p_{ray}\), the orange dot is \(p_o\), and the blue dot is \(p_{offset}\). 
-                Hopefully it is clear why we need the \(n_{axis}(\frac{l}{2})\) term for \(p_{ray}\). 
+            <img src="../images/rayProbe.png" alt="ray probe image" width="600" height="400">
+            <p>The bottom black dot (labelled "target") is \(p_{ray}\), the orange dot is \(p_o\), and the blue dot is
+                \(p_{offset}\).
+                Hopefully it is clear why we need the \(n_{axis}(\frac{l}{2})\) term for \(p_{ray}\).
                 <em>(It moves it down to the edge of the sphere.)</em>
             </p>
             <h3>Getting The Exit Direction \(\omega_i\)</h3>
             <p>
-                Once we have our entrance point \(p_i\), we can decide the direction on it by simply sampling a lambertian lobe at \(p_i\).
+                Once we have our entrance point \(p_i\), we can decide the direction on it by simply sampling a
+                lambertian lobe at \(p_i\).
                 Make sure to save the pdf as this is actually \(p(\omega_i)\) described in our estimator.
             </p>
             <div style="margin-left:1.5em; color:#797979; font-size:0.97em;">
                 <em>
-                    Technically, youre free to sample any lobe as long as you provide the correct pdf. The BSSRDF happens to have an
+                    Technically, youre free to sample any lobe as long as you provide the correct pdf. The BSSRDF
+                    happens to have an
                     angular term which is why lambertian is optimal.
                 </em>
             </div>
-        
+
             <h3>Resolving PDFs \(p(\omega_i)\) and \(p(p_i)\)</h3>
             <p>Recall our monte carlo estimator:</p>
             <p>
                 $$
-                L_o(p_o, \omega_o) \approx (1 - F(\omega_o))\frac{1}{N}\sum_{i=1}^{N}{\frac{ L_i(p_o, \omega_i) S_p(p_o, p_i) S_\omega(\omega_i) (\omega_i \cdot n_i)}{p(\omega_i)p(p_i)}}
+                L_o(p_o, \omega_o) \approx (1 - F(\omega_o))\frac{1}{N}\sum_{i=1}^{N}{\frac{ L_i(p_o, \omega_i) S_p(p_o,
+                p_i) S_\omega(\omega_i) (\omega_i \cdot n_i)}{p(\omega_i)p(p_i)}}
                 $$
             </p>
 
-            <p>We need to find the correct PDFs now; \(p(p_i)\) to account for the chance of picking our entrance point, and \(p(\omega_i\))
-                 to account the incoming lights direction. 
+            <p>We need to find the correct PDFs now; \(p(p_i)\) to account for picking our entrance point, and
+                \(p(\omega_i\))
+                to account the incoming lights direction.
             </p>
             <p>As discussed earlier, \(p(\omega_i\)) is exactly the pdf for a lambertian sample: </p>
             <p>
@@ -369,33 +471,26 @@
                 p(\omega_i) = \frac{cos(\theta_i)}{\pi}
                 $$
             </p>
-            <p>And now I'll pull this out my hat and state:</p>
+
+            <p>
+                To account for picking the entrance point \(p_i\), we can observe that the diffusion profile \(R(r)\)
+                gives the energy when exiting at distance \(r\),
+                and importance sampling points proportional to that energy makes the pdf just the normalized diffusion
+                profile:
+            </p>
             <p>
                 $$
                 p(p_i) = s \frac{e^{-sr/\ell} + e^{-sr/(3\ell)}}{8 \pi \ell r}
                 $$
             </p>
-            <p>So the pdf of picking your entrance point is just the diffusion profile without \(A\).</p>
             <div style="margin-left:1.5em; color:#797979; font-size:0.8em;">
                 <em>
-                    If you want the derivation, here it is. For \(p(p_i)\), we want to find:
+                    If you're not convinced, we can derive it. For \(p(p_i)\), we want to find:
                     <p>
                         $$
                         p(p_i) = \frac{R(r)}{\int_{0}^{2\pi} \int_{0}^{\infty}rR(r)drd\phi}
                         $$
-        
-                    </p>
-                    <p>Lets define:</p>
-                    <p>
-                        $$
-                        R'(r) = s \frac{e^{-sr/\ell} + e^{-sr/(3\ell)}}{8 \pi \ell r}
-                        $$
-                    </p>
-                    <p>So</p>
-                    <p>
-                        $$
-                        R(r) = AR'(r)
-                        $$
+
                     </p>
                     <p>Since the diffusion profile is normalized:</p>
                     <p>
@@ -406,7 +501,8 @@
                     <p>Therefore:</p>
                     <p>
                         $$
-                        \int_{0}^{2\pi} \int_{0}^{\infty}rR(r)drd\phi = \int_{0}^{2\pi} \int_{0}^{\infty}rAR'(r)drd\phi = A
+                        \int_{0}^{2\pi} \int_{0}^{\infty}rR(r)drd\phi = \int_{0}^{2\pi} \int_{0}^{\infty}rAR'(r)drd\phi
+                        = A\int_{0}^{2\pi} \int_{0}^{\infty}rR'(r)drd\phi = A
                         $$
                     </p>
                     <p>Plug it back in:</p>
@@ -423,13 +519,56 @@
             </p>
             <p>
                 $$
-                L_o(p_o, \omega_o) \approx (1 - F(\omega_o))\frac{1}{N}\sum_{i=1}^{N}{\frac{ L_i(p_o, \omega_i) S_p(p_o, p_i) S_\omega(\omega_i) (\omega_i \cdot n_i)}{p(\omega_i)p(p_i)}}
+                L_o(p_o, \omega_o) \approx (1 - F(\omega_o))\frac{1}{N}\sum_{i=1}^{N}{\frac{ L_i(p_o, \omega_i) S_p(p_o,
+                p_i) S_\omega(\omega_i) (\omega_i \cdot n_i)}{p(\omega_i)p(p_i)}}
                 $$
             </p>
 
+            <figure class="media">
+                <img id="toggle-image2" src="../images/backlight10000spp-10.0--17lm.-170.png" alt="XYZ Dragon SSS High">
+                <figcaption>XYZ dragon (~350cm) rendered with a backlight with radiance \(L_e = 17\). Note that even though the light
+                    source is behind it, the light exits from the front of the model at high mean free path values.
+                </figcaption>
+            </figure>
 
+            <div style="display:flex; gap:.5em; justify-content:center; margin-bottom:2em;">
+                <button class="img-swap2" data-src="../images/backlight10000spp-10.0--17lm.-170.png"
+                    data-alt="XYZ Dragon SSS High">
+                    \(\ell = 10.0\)
+                </button>
+                <button class="img-swap2" data-src="../images/backlight10000spp-1.0--17lm.-170.png"
+                    data-alt="XYZ Dragon SSS Medium">
+                    \(\ell = 1.0\)
+                </button>
+                <button class="img-swap2" data-src="../images/backlight10000spp-0.1--17lm.-170.png"
+                    data-alt="XYZ Dragon SSS Low">
+                    \(\ell = 0.1\)
+                </button>
+            </div>
+
+            <script>
+                const img2 = document.getElementById('toggle-image2');
+                const buttons2 = document.querySelectorAll('.img-swap2');
+
+                function setActive2(btn) {
+                    buttons2.forEach(b => b.disabled = false);
+                    btn.disabled = true; // simple "active" state
+                }
+
+                buttons2.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        img2.src = btn.dataset.src;
+                        img2.alt = btn.dataset.alt || '';
+                        setActive2(btn);
+                    });
+                });
+
+                // mark the first one active on load (matches initial <img> src)
+                setActive2(buttons2[0]);
+            </script>
 
         </div>
     </div>
 </body>
+
 </html>
