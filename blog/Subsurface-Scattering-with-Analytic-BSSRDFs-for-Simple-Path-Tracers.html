@@ -241,7 +241,7 @@
                             rel="noopener noreferrer">this one described by Disney.</a>:</p>
                     <p>
                         $$
-                        S_r(\|p_o - p_i\|) \approx R'(r) = s \frac{e^{-sr/\ell} + e^{-sr/(3\ell)}}{8 \pi \ell r}
+                        S_r(\|p_o - p_i\|) \approx R'(r) = \frac{e^{-r/d} + e^{-r/(3d)}}{8 \pi d r}
                         $$
                     </p>
                     <div style="margin-left:1.5em; color:#797979; font-size:0.85em;">
@@ -392,7 +392,7 @@
     rcpPdf = (8.0f * pi * rcpS) * rcpExp;
 }
 </code></pre>
-            <p>Again, I'm using the luminance approximation to calculate <code>s</code>. Please note that the above code
+            <p> Please note that the above code
                 assumes \(\ell = 1\). To convert it to take in any \(\ell\), simply multiply:</p>
             <pre style="margin: 0.5em 0 1.5em 0;"><code>r *= ell;
 </code></pre>
@@ -513,6 +513,34 @@
                     </p>
                 </em>
             </div>
+            <h3>Checking our Work</h3>
+            <p>
+                Knowing you've implemented SSS correctly can be tricky and unreliable just by looking at it visually. One easy statistical check for energy conservation
+                uses the fact: 
+            </p>
+            <p>
+                $$
+                \int_{0}^{2\pi}\int_{0}^{\infty}{rR(r) drd \phi} = A
+                $$
+            </p>
+            <p>
+                Meaning that the average energy for all your BSSRDF samples for each material should be pretty much exactly \(A\) for that material. For example,
+                in your intergrator, if the ray exhibited SSS:
+            </p>
+            <pre style="margin: 1.5em 0;"><code>float cosine = fmaxf(glm::dot(scattered.direction(), rec.normal), 0.0f);
+glm::vec3 contrib = evaluation * cosine / pdf;
+                
+if (prevSSS) 
+{
+    atomicAdd(&sssEnergySumR, (double)contrib.r);
+    atomicAdd(&sssEnergySumG, (double)contrib.g);
+    atomicAdd(&sssEnergySumB, (double)contrib.b);
+    atomicAdd(&sssHitCount, 1ull);  
+}
+</code></pre>
+            <p>Then after rendering, check the average:</p>
+            <pre style="margin: 1.5em 0;"><code>printf("SSS samples: %llu, Avg Energy: (%lf, %lf, %lf)\n", sssHitCount, sssEnergySumR/(double)sssHitCount, sssEnergySumG / (double)sssHitCount, sssEnergySumB / (double)sssHitCount);
+</code></pre>
             <h2>Conclusion</h2>
             <p>
                 Hopefully now you know how to calculate each piece of the Monte Carlo estimator:
