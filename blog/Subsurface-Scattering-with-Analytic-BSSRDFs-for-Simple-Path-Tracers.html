@@ -138,7 +138,7 @@
         <div class="post-content">
             <p>I've been implementing a simple energy conserving path tracer and wanted to add subsurface scattering to
                 it but I didn't find any tutorials for it. If you want to implement a simple, physically based SSS into
-                your path tracer, I hope I can help.</p>
+                your path tracer, I hope I can help. Note that this in context of single sample MIS.</p>
             <p>In SSS, light enters a point on a surface, then re-emerged at a point that may or may not be where it
                 first entered. Looking at the rendering equation:</p>
             <p>
@@ -196,7 +196,7 @@
             </p>
             <p>If you dont have a full BSDF system, draw a random number uniformly \(u_1 \in [0, 1]\) and test \(u_1 < 1
                     - F(\omega_o)\). If it fails, simply fall back to something like a reflection lobe. Otherwise we
-                    evaulate the BSSRDF.</p>
+                    evaulate the BSSRDF. For multi-sample MIS, please refer to pbrt.</p>
                     <div style="margin-top:2em;">\(S_\omega(\omega_i)\)</div>
                     <p>This term accounts for the energy loss when the ray exits the surface. Here is the function (from
                         <a href="https://pbr-book.org/3ed-2018/Volume_Scattering/The_BSSRDF" target="_blank"
@@ -513,6 +513,7 @@
                     </p>
                 </em>
             </div>
+            <p>For multi-sample MIS, we should also include the random selection probablities. Please refer to pbrt.</p> 
             <h3>Checking our Work</h3>
             <p>
                 Knowing you've implemented SSS correctly can be tricky and unreliable just by looking at it visually. One easy statistical check for energy conservation
