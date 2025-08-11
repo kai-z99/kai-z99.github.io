@@ -95,50 +95,116 @@
         <div class="post-meta" style="margin-bottom:1.5em;">Kai Zhang</div>
 
         <figure class="media">
-            <img id="toggle-image" src="../images/xyz10000spp10.0-0.2NL.png" alt="XYZ Dragon SSS High">
-            <figcaption>
-              XYZ dragon (350 cm) rendered with different mean free path values.
-              Overhead area light emitted radiance \(L_e = 8\); sky radiance \(L_{\text{sky}} = (0.49, 0.56, 0.70)\).
+            <img id="scene-image" src="../images/xyz10000spp10.0-0.2NL.png" alt="Overhead · ℓ = 10.0">
+            <figcaption id="scene-caption">
+                XYZ dragon (350 cm) rendered with different mean free path values.
+                Overhead area light emitted radiance \(L_e = 8\); sky radiance \(L_{\text{sky}} = (0.49, 0.56, 0.70)\).
             </figcaption>
-        </figure>
-
-        <div style="display:flex; gap:.5em; justify-content:center; margin-bottom:2em;">
-            <button class="img-swap" data-src="../images/xyz10000spp10.0-0.2NL.png" data-alt="XYZ Dragon SSS High">
-                \(\ell = 10.0\)
-            </button>
-            <button class="img-swap" data-src="../images/xyz10000spp1.1-0.2NEW.png" data-alt="XYZ Dragon SSS Medium">
-                \(\ell = 1.0\)
-            </button>
-            <button class="img-swap" data-src="../images/xyz10000spp0.1-0.2NEW.png" data-alt="XYZ Dragon SSS Low">
-                \(\ell = 0.1\)
-            </button>
-        </div>
-
-        <script>
-            const img = document.getElementById('toggle-image');
-            const buttons = document.querySelectorAll('.img-swap');
-
-            function setActive(btn) {
-                buttons.forEach(b => b.disabled = false);
-                btn.disabled = true; // simple "active" state
+          </figure>
+          
+          <!-- Controls -->
+          <div style="display:flex; flex-direction:column; gap:.75em; justify-content:center; align-items:center; margin-bottom:2em;">
+            <!-- Scene buttons -->
+            <div role="group" aria-label="Scene" style="display:flex; gap:.5em;">
+              <button class="scene-btn" data-scene="sky">Sky</button>
+              <button class="scene-btn" data-scene="backlight">Backlight</button>
+            </div>
+            <!-- ell buttons -->
+            <div role="group" aria-label="Mean free path" style="display:flex; gap:.5em;">
+              <button class="ell-btn" data-ell="10.0">\(\ell = 10.0\)</button>
+              <button class="ell-btn" data-ell="1.0">\(\ell = 1.0\)</button>
+              <button class="ell-btn" data-ell="0.1">\(\ell = 0.1\)</button>
+            </div>
+          </div>
+          
+          <script>
+            const IMAGE_MAP = {
+              sky: {
+                "10.0": { src: "../images/xyz10000spp10.0-0.2NL.png",
+                caption: "XYZ dragon (350 cm), Overhead light \\(L_e = 8\\); sky \\(L_{\\\\{sky}}=(0.49,0.56,0.70)\\)."},
+                "1.0": { src: "../images/xyz10000spp1.1-0.2NEW.png",
+                         caption: "XYZ dragon (350 cm), Overhead light \\(L_e = 8\\); sky \\(L_{\\\\{sky}}=(0.49,0.56,0.70)\\)." },
+                "0.1": { src: "../images/xyz10000spp0.1-0.2NEW.png",
+                         caption: "XYZ dragon (350 cm), Overhead light \\(L_e = 8\\); sky \\(L_{\\\\{sky}}=(0.49,0.56,0.70)\\)." }
+              },
+              backlight: {
+                "10.0": { src: "../images/backlight10000spp-10.0--17lm.-170.png",
+                          caption: "Backlight \\(L_e = 17\\). Note how even though the light source is behind the model, light exits from the front at higher mean free path values." },
+                "1.0":  { src: "../images/backlight10000spp-1.0--17lm.-170.png",
+                          caption: "Backlight \\(L_e = 17\\). Note how even though the light source is behind the model, light exits from the front at higher mean free path values." },
+                "0.1":  { src: "../images/backlight10000spp-0.1--17lm.-170.png",
+                          caption: "Backlight \\(L_e = 17\\). Note how even though the light source is behind the model, light exits from the front at higher mean free path values." }
+              }
+            };
+          
+            const imgEl = document.getElementById("scene-image");
+            const capEl = document.getElementById("scene-caption");
+            const sceneBtns = document.querySelectorAll(".scene-btn");
+            const ellBtns = document.querySelectorAll(".ell-btn");
+          
+            // State
+            let currentScene = "sky";
+            let currentEll = "10.0";
+          
+            // Helpers
+            function setActive(btns, value, attr) {
+              btns.forEach(b => {
+                const isActive = b.dataset[attr] === value;
+                b.disabled = isActive; 
+                b.setAttribute("aria-pressed", isActive ? "true" : "false");
+              });
             }
-
-            buttons.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    img.src = btn.dataset.src;
-                    img.alt = btn.dataset.alt || '';
-                    setActive(btn);
-                });
+          
+            function updateImage() {
+              const entry = IMAGE_MAP[currentScene][currentEll];
+              imgEl.src = entry.src;
+              imgEl.alt = `${capitalize(currentScene)} · ℓ = ${currentEll}`;
+              capEl.innerHTML = entry.caption;
+              if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([capEl]);
+            }
+          
+            function capitalize(s){ return s.charAt(0).toUpperCase() + s.slice(1); }
+          
+            // Event wiring
+            sceneBtns.forEach(btn => {
+              btn.addEventListener("click", () => {
+                currentScene = btn.dataset.scene;
+                setActive(sceneBtns, currentScene, "scene");
+                updateImage();
+                // Preload the other ℓ variants for the newly chosen scene
+                preloadScene(currentScene);
+              });
             });
-
-            // mark the first one active on load (matches initial <img> src)
-            setActive(buttons[0]);
-        </script>
+          
+            ellBtns.forEach(btn => {
+              btn.addEventListener("click", () => {
+                currentEll = btn.dataset.ell;
+                setActive(ellBtns, currentEll, "ell");
+                updateImage();
+              });
+            });
+          
+            // Preload all images (lightweight + avoids flicker)
+            function preloadScene(scene){
+              Object.values(IMAGE_MAP[scene]).forEach(({src}) => { const im = new Image(); im.src = src; });
+            }
+            function preloadAll(){
+              Object.keys(IMAGE_MAP).forEach(preloadScene);
+            }
+          
+            // Init UI to match initial <img> src
+            setActive(sceneBtns, currentScene, "scene");
+            setActive(ellBtns, currentEll, "ell");
+            preloadAll();
+            updateImage();
+          </script>
+          
 
         <div class="post-content">
             <p>I've been implementing a simple energy conserving path tracer and wanted to add subsurface scattering to
                 it but I didn't find any tutorials for it. If you want to implement a simple, physically based SSS into
-                your path tracer, I hope I can help. Note that this in context of single sample MIS.</p>
+                your path tracer, I hope I can help. Note that this in context of single sample MIS.
+            </p>
             <p>In SSS, light enters a point on a surface, then re-emerged at a point that may or may not be where it
                 first entered. Looking at the rendering equation:</p>
             <p>
@@ -178,7 +244,7 @@
             <p>Therefore the rendering equation becomes:</p>
             <p>
                 $$
-                L_o(p_o, \omega_o) = (1 - F(\omega_o))\int_{A} S_p(p_o, p_i) \int_{\Omega}S_{\omega}(\omega_i)(\omega_i
+                L_o(p_o, \omega_o) = (1 - F(\omega_o))\int_{A} S_p(p_o, p_i) \int_{\Omega}L_i(p_o, \omega_i)S_{\omega}(\omega_i)(\omega_i
                 \cdot n_i) d\omega_idA
                 $$
             </p>
@@ -241,7 +307,7 @@
                             rel="noopener noreferrer">this one described by Disney.</a>:</p>
                     <p>
                         $$
-                        S_r(\|p_o - p_i\|) \approx R'(r) = \frac{e^{-r/d} + e^{-r/(3d)}}{8 \pi d r}
+                        S_r(\|p_o - p_i\|) = R'(r) = \frac{e^{-r/d} + e^{-r/(3d)}}{8 \pi d r}
                         $$
                     </p>
                     <div style="margin-left:1.5em; color:#797979; font-size:0.85em;">
@@ -275,7 +341,7 @@
                                 \rho_{eff} = \int_{0}^{2\pi}\int_{0}^{\infty}{rS_r(r) drd \phi}
                                 $$
                             </p>
-                            <p>Where \(S_r(r)\) is the diffusion profile. For Burley's profile:</p>
+                            <p>Where \(S_r(r)\) is the diffusion profile. For Disney's profile:</p>
                             <p>
                                 $$
                                 \rho_{eff} = \int_{0}^{2\pi}\int_{0}^{\infty}{rR(r) drd \phi} =
@@ -307,7 +373,7 @@
                 s = 1.85 - A_{channel} + 7|A_{channel} - 0.8|^3
                 $$
             </p>
-            <p>\(A_{channel}\) is the rgb channel that is randomly selected when sampling. More info on this in the next
+            <p>\(A_{channel}\) is the value of the rgb channel that is randomly selected when sampling. More info on this in the next
                 section.</p>
             <h2>Importance Sampling</h2>
             <p>The next question is, how do we decide our enter and exit points \(p_i\), \(p_o\) to evaluate the
@@ -355,7 +421,7 @@
             <p>Previously I mentioned we must choose a point on that disk based on the diffusion profile's CDF. This is
                 the importance sampling part. Essentially, we want to pick points on the disk that give the most
                 contribution to our evaluation of <span style="white-space:nowrap;">\(R(r)\)</span>.</p>
-            <p>Burley provided us with a perfect CDF in the paper:</p>
+            <p>Disney provided us with the CDF in the paper:</p>
             <p>
                 $$
                 \text{CDF}(r) = 1 - \frac{1}{4} e^{-r/d} - \frac{3}{4} e^{-r/(3d)}
@@ -366,7 +432,7 @@
                     rel="noopener noreferrer">Zero Radiance in 2019 proved it in fact was</a>:</p>
             <p style="text-align:center; margin: 1.5em 0;">
                 $$
-                x = sr = 3 \log\left(\frac{1 + G(u)^{-1/3} + G(u)^{1/3}}{4u}\right),
+                \frac{r}{d} = 3 \log\left(\frac{1 + G(u)^{-1/3} + G(u)^{1/3}}{4u}\right),
                 $$
             </p>
             <p style="text-align:center; margin: 1.5em 0;">
@@ -521,7 +587,7 @@
             </p>
             <p>
                 $$
-                \int_{0}^{2\pi}\int_{0}^{\infty}{rR(r) drd \phi} = A
+                \int_{0}^{2\pi}\int_{0}^{\infty}{rR(r) drd \phi} = A, \int_{\Omega}S_{\omega}(\omega_i)(\omega_i \cdot n_i)d\omega_i = 1
                 $$
             </p>
             <p>
@@ -552,76 +618,15 @@ if (prevSSS)
                 p_i) S_\omega(\omega_i) (\omega_i \cdot n_i)}{p(\omega_i)p(p_i)}}
                 $$
             </p>
-
             <figure class="media">
-                <img id="toggle-image2" src="../images/backlight10000spp-10.0--17lm.-170.png" alt="XYZ Dragon SSS High">
-                <figcaption>XYZ dragon (~350cm) rendered with a backlight with radiance \(L_e = 17\). Note that even though the light
-                    source is behind it, the light exits from the front of the model at high mean free path values.
+                <img src="../images/sssAssorted10000spp.png" alt="Assorted SSS Renders">
+                <figcaption>
+                    Assorted models around a spherical light \(L_e = 30\).
+                    Dragon: \(\ell= 10.0 , \alpha = 0.5\) Lucy: \(\ell= 7.0 , \alpha = 0.1\) Buddha: \(\ell= 1.0 , \alpha = 0.5\)
                 </figcaption>
             </figure>
-
-            <div style="display:flex; gap:.5em; justify-content:center; margin-bottom:2em;">
-                <button class="img-swap2" data-src="../images/backlight10000spp-10.0--17lm.-170.png"
-                    data-alt="XYZ Dragon SSS High">
-                    \(\ell = 10.0\)
-                </button>
-                <button class="img-swap2" data-src="../images/backlight10000spp-1.0--17lm.-170.png"
-                    data-alt="XYZ Dragon SSS Medium">
-                    \(\ell = 1.0\)
-                </button>
-                <button class="img-swap2" data-src="../images/backlight10000spp-0.1--17lm.-170.png"
-                    data-alt="XYZ Dragon SSS Low">
-                    \(\ell = 0.1\)
-                </button>                
-            </div>
-
-            <h2>References</h2>
-            <ol>
-                <li>https://pbr-book.org/3ed-2018/contents</li>
-                <li>https://graphics.pixar.com/library/ApproxBSSRDF/paper.pdf</li>
-                <li>http://www.graphics.stanford.edu/papers/bssrdf/bssrdf.pdf</li>
-                <li>https://media.disneyanimation.com/uploads/production/publication_asset/153/asset/siggraph2016SSS.pdf</li>
-                <li>https://gao-duan.github.io/blogs/bssrdf/index.html</li>
-                <li>https://agraphicsguynotes.com/posts/practical_tips_for_implementing_subsurface_scattering_in_a_ray_tracer/</li>
-                <li>https://zero-radiance.github.io/post/sampling-diffusion/</li>
-
-            </ol>
-
-            <script>
-                const img2 = document.getElementById('toggle-image2');
-                const buttons2 = document.querySelectorAll('.img-swap2');
-
-                function setActive2(btn) {
-                    buttons2.forEach(b => b.disabled = false);
-                    btn.disabled = true; // simple "active" state
-                }
-
-                buttons2.forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        img2.src = btn.dataset.src;
-                        img2.alt = btn.dataset.alt || '';
-                        setActive2(btn);
-                    });
-                });
-
-                // mark the first one active on load (matches initial <img> src)
-                setActive2(buttons2[0]);
-            </script>
-            <script>
-                // first image group
-                document.querySelectorAll('.img-swap').forEach(btn => {
-                    const src = btn.dataset.src;
-                    const img = new Image();
-                    img.src = src;
-                });
             
-                // second image group
-                document.querySelectorAll('.img-swap2').forEach(btn => {
-                    const src = btn.dataset.src;
-                    const img = new Image();
-                    img.src = src;
-                });
-            </script>
+
         </div>
     </div>
 </body>
