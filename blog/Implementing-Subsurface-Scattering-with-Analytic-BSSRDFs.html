@@ -201,11 +201,12 @@
           
 
         <div class="post-content">
-            <p>I've been implementing a simple energy conserving path tracer and wanted to add subsurface scattering to
-                it but I didn't find any tutorials for it. If you want to implement a simple, physically based SSS into
-                your path tracer, I hope I can help. Note that this in context of single sample MIS.
+            <p>Subsurface scattering (SSS) can create interesting visuals in a render. Although the theory is availible online, 
+                implementation can be confusing. This post will explain how to implement a physically based SSS model into your path 
+                tracer using analytic bidirectional scattering surface reflectance distribution functions (BSSRDFs).
+                Note that this in context of single sample MIS.
             </p>
-            <p>In SSS, light enters a point on a surface, then re-emerged at a point that may or may not be where it
+            <p>In SSS, light enters a point on a surface, then re-emerges at a point that may or may not be where it
                 first entered. Looking at the rendering equation:</p>
             <p>
                 $$
@@ -222,7 +223,8 @@
             </p>
 
 
-            <p>We can see that it only supports light entering and exiting at one point. Therefore we to use the BSSRDF:
+            <p>We can see that it only supports light entering and exiting at one point. Therefore we to use the BSSRDF, which can account for
+                distinct entrance and exit points:
             </p>
             <p>
                 $$
@@ -230,8 +232,8 @@
                 \cdot n_i) d\omega_i dA
                 $$
             </p>
-            <p>As you can see, not only do we have a hemisphere around our point but we must also consider the area
-                surrounding it.</p>
+            <p>As you can see, instead of integrating just the hemisphere around a point, we must integrate over the entire 
+                surface of the object \(A\), to account for all possible points of light entry.</p>
             <p>Of course the integral in this form is quite difficult to evaluate. Luckily in 2001, <a
                     href="http://www.graphics.stanford.edu/papers/bssrdf/bssrdf.pdf" target="_blank"
                     rel="noopener noreferrer">Jensen et al proposed a more manageable form</a> of the BSSRDF term called
@@ -385,8 +387,7 @@
                     style="white-space:nowrap;">\((1 - F(\omega_o))\)</span> test, meaning it has entered the surface
             </p>
             <ol style="margin-left:1.5em;">
-                <li>Get the point of intersection and its normal. That is your <span
-                        style="white-space:nowrap;">\(p_o\)</span>.</li>
+                <li>Get the point of intersection and its normal. That is your \(p_o\).</li>
                 <li>Choose a random axis on the orthonormal basis with chance \(T:0.25, B:0.25, N:0.5\) (let's call it
                     \(n_{axis}\)). Randomly choose an rgb channel uniformly.</li>
                 <li>Draw a sphere at that point that encapsulates 99.9% of the energy of the diffusion profile.
@@ -410,7 +411,7 @@
                 <li>Gather every intersection in a linked list, and remove any that are not apart of the model. (For
                     example, a wall near the model.)</li>
                 <li>Uniformly choose a random intersection point. Get the normal and position of that intersection. That
-                    is your <span style="white-space:nowrap;">\(p_i\)</span>.</li>
+                    is your \(p_i\) and \(n_i\).</li>
                 <li>Sample from a diffuse lobe at \(p_i\) to get the incoming direction \(w_i\).</li>
                 <div style="margin-left:1.5em; color:#797979; font-size:0.97em;">
                     <em>More detail on this in upcoming section.</em>
