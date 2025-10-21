@@ -111,48 +111,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     // ================================================
-    // Reveal Animations (Unchanged)
+    // Scroll reveal animations removed for static display
     // ================================================
-    const revealSections = document.querySelectorAll('section');
-    
-    function checkScroll() {
-        const triggerBottom = window.innerHeight * 1.0; 
-
-        revealSections.forEach(section => {
-            const sectionTop = section.getBoundingClientRect().top;
-
-            // Reveal if top edge is above the trigger line
-            if (sectionTop < triggerBottom) {
-                section.classList.add('revealed'); // Add class for CSS transition
-            } else {
-                 section.classList.remove('revealed'); // Remove class when scrolled out
-            }
-        });
-    }
-    
-    // Set initial state using CSS for better performance
-    // Add this to your CSS:
-    /*
-    section {
-        opacity: 0;
-        transform: translateY(30px);
-        transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-    }
-    section.revealed {
-        opacity: 1;
-        transform: translateY(0);
-    }
-    */
-    
-    // Check scroll position on load and scroll
-    // Debounce scroll handler for performance
-    let scrollTimeout;
-    window.addEventListener('scroll', () => {
-        clearTimeout(scrollTimeout);
-        scrollTimeout = setTimeout(checkScroll, 50); // Adjust debounce time as needed
-    });
-    // Initial check in case sections are already in view on load
-    checkScroll();
 
 
     // ================================================

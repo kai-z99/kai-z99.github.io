@@ -49,13 +49,6 @@ ul {
 
 section {
     padding: 80px 0;
-    opacity: 0;
-    transform: translateY(40px);
-    transition: opacity 0.23s ease-out, transform 0.23s ease-out;
-    will-change: opacity, transform;
-}
-
-section.revealed {
     opacity: 1;
     transform: translateY(0);
 }
