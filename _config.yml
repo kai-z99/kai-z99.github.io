@@ -1,0 +1,32 @@
+# Site settings
+title: Kai Zhang
+description: Personal Website and Blog
+url: "https://kai-z99.github.io"
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+
+# Kramdown settings (for math support)
+kramdown:
+  math_engine: mathjax
+
+# Exclude from build
+exclude:
+  - README.md
+  - build.py
+  - "*.py"
+
+# Collections for blog posts
+collections:
+  posts:
+    output: true
+    permalink: /blog/:title/
+
+# Defaults
+defaults:
+  - scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: "post"

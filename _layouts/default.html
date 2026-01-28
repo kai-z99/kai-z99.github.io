@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page.title | default: site.title }}</title>
+    {% if page.layout == 'post' %}
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    {% endif %}
+    <style>
+        body {
+            background: #fff;
+            color: #222;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 700px;
+            margin: 60px auto 0 auto;
+            padding: 32px 24px;
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border-radius: 8px;
+        }
+    </style>
+    {{ content | extract: 'head' }}
+</head>
+<body>
+    {{ content }}
+</body>
+</html>
