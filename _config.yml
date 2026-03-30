@@ -16,6 +16,8 @@ exclude:
   - README.md
   - build.py
   - "*.py"
+  - vendor
+  - .bundle
 
 # Collections for blog posts
 collections:

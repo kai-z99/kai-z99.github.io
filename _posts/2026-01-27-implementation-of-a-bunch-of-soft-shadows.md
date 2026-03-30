@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Implementation of a Bunch of Soft Shadow Techniques"
+title: "Implementing PCSS"
 date: 2026-01-27
 author: Kai Zhang
 ---
