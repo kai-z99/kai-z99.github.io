@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Implementing pCSS"
+title: "Implementing PCSS"
 date: 2026-01-27
 author: Kai Zhang
 ---
