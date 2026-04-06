@@ -5,53 +5,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kai | Personal Website</title>
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        (function () {
+            var savedTheme = localStorage.getItem("theme");
+            if (savedTheme === "light") {
+                document.documentElement.setAttribute("data-theme", "light");
+            }
+        })();
+    </script>
 </head>
 <body>
     <header>
         <div class="container">
-            <img src="images/KZ.jpeg" alt="Kai Zhang Logo" class="header-logo"> 
+            <a href="#hero" class="site-brand">Kai Zhang</a>
             <nav>
                 <ul>
-                    <li><a href="#about">Highlights</a></li>
+                    <li><a href="#about">About</a></li>
                     <li><a href="#projects">Projects</a></li>
                     <li><a href="#experience">Experience</a></li>
                     <li><a href="blog/index.html">Blog</a></li>
                 </ul>
             </nav>
+            <button id="theme-toggle" type="button" aria-label="Toggle light mode">Light mode</button>
         </div>
     </header>
 
     <section id="hero">
         <div class="container">
-            <h2>Kai <span>Zhang</span></h2>
-            <p>Student at the University of British Columbia, studying Computer Science. Interested in computer graphics and game development.</p>
+            <h1>Kai <span>Zhang</span></h1>
         </div>
     </section>
 
     <section id="about">
         <div class="container">
-            <h2>Highlights</h2>
-            <p>Programming Languages: C/C++, Swift, Python, Java, GLSL <br/>
-                Libraries/Tools: OpenGL, visionOS, Unreal Engine, raylib, Box2D, SFML, Windows SDK, Visual Studio, GCC/ G++, Git, vcpkg, RenderDoc
-                </p>
-        </div>
-    </section>
-
-    <!-- PBR Showcase Section -->
-    <section id="pbr-showcase">
-        <div class="container pbr-container">
-            <div class="pbr-gif-wrapper">
-                <img src="images/koopaEngineDemoPBR2.gif" alt="Physically Based Rendering Demo" class="pbr-gif">
-            </div>
-            <p class="pbr-caption"></p>
-        </div>
-    </section>
-
-    <section id="cube-animation">
-        <div class="container">
-            <div class="cube-flow-container"> 
-            </div>
+            <h2>About</h2>
+            <p>I focus on both real-time and offline computer graphics, and I am also interested in accelerated computing.</p>
         </div>
     </section>
 
@@ -59,6 +47,16 @@
         <div class="container">
             <h2>Projects</h2>
             <div class="project-grid">
+                <div class="project-card">
+                    <div class="project-info">
+                        <h3>Inferno Renderer</h3>
+                        <p>A realtime Vulkan renderer. Supports gltf 2.0 PBR. Runs on Windows and Linux.</p>
+                        <div class="project-links">
+                            <a href="https://github.com/kai-z99/inferno-renderer" class="btn" target="_blank" rel="noopener noreferrer">View Project</a>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Project 1 -->
                 <div class="project-card">
                     <img src="images/sssAssorted50000spp.png" alt="Raytracing Playground Screenshot" class="project-image">
@@ -75,7 +73,7 @@
                     <img src="images/koopaEngineDemo1Trim4.gif" alt="KoopaEngine Demo GIF" class="project-image"> 
                     <div class="project-info">
                         <h3>Koopa Engine</h3>
-                        <p>A C++ Forward+ PBR rendering library using OpenGL aimed at making 3D programming more accessible for everyone.</p>
+                        <p>A OpenGL Forward+ PBR renderer.</p>
                         <div class="project-links">
                             <a href="https://github.com/kai-z99/KoopaEngine" class="btn" target="_blank" rel="noopener noreferrer">View Project</a>
                         </div>
@@ -86,7 +84,7 @@
                     <img src="images/shadows1.png" alt="Advanced Soft Shadows" class="project-image">
                     <div class="project-info">
                         <h3>Advanced Soft Shadows</h3>
-                        <p>An interactive web-based demonstration of advanced soft shadow rendering techniques and algorithms.</p>
+                        <p>An interactive web-based demonstration of advanced soft shadow mapping algorithms.</p>
                         <div class="project-links">
                             <a href="https://kai-z99.github.io/AdvancedSoftShadows/" class="btn" target="_blank" rel="noopener noreferrer">View Project</a>
                         </div>
@@ -107,6 +105,17 @@
 
                 <div class="project-card">
 
+                    <div class="project-info">
+                        <h3>Virtual Soils</h3>
+                        <p>View gaussian splats on the web.</p>
+                        <div class="project-links">
+                            <a href="https://github.com/ubcemergingmedialab/25---1002-SOIL-SCIENCE" class="btn" target="_blank" rel="noopener noreferrer">View Project</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="project-card">
+
                     <img src="images/mining.png" alt="Mining" class="project-image">
                     <div class="project-info">
                         <h3>Immersive Education in Mining</h3>
@@ -118,42 +127,6 @@
                 </div>
                 
 
-                <div class="project-card">
-                    <img src="images/turretGameImage.png" alt="TurretGame Screenshot" class="project-image"> 
-                    <div class="project-info">
-                        <h3>Turret Force I</h3>
-                        <p>A C++ tower defense game developed using raylib. </p>
-                        <div class="project-links">
-                            <a href="https://github.com/kai-z99/TurretGame" class="btn" target="_blank" rel="noopener noreferrer">View Project</a>
-                        </div>
-                    </div>
-                </div>
-                
-
-                <div class="project-card">
-                    <img src="images/blockCrasherImage.png" alt="BlockCrasher Game Screenshot" class="project-image"> 
-                    <div class="project-info">
-                        <h3>Block Crasher</h3>
-                        <p>A C++ action game developed using raylib.</p>
-                        <div class="project-links">
-                            <a href="https://github.com/kai-z99/BlockCrasher" class="btn" target="_blank" rel="noopener noreferrer">View Project</a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="project-card">
-                    <img src="images/physics.png" alt="Physics Playground Screenshot" class="project-image">
-                    <div class="project-info">
-                        <h3>Physics Playground</h3>
-                        <p>An educational physics tool developed using C++ and Box2D.</p>
-                        <div class="project-links">
-                            <a href="https://github.com/kai-z99/PhysicsPlayground" class="btn" target="_blank" rel="noopener noreferrer">View Project</a>
-                        </div>
-                    </div>
-                </div>
-
- 
-
             </div> <!-- End of project-grid -->
         </div> <!-- End of container -->
     </section> <!-- End of projects section -->
@@ -161,7 +134,7 @@
     <section id="experience">
         <div class="container">
             <h2>Work Experience</h2>
-            <p class="section-location"><i class="fas fa-map-marker-alt"></i> Vancouver, BC</p> 
+            <p class="section-location">Vancouver, BC</p>
             <div class="timeline">
                 <!-- Experience 1 -->
                 <div class="timeline-item">
@@ -177,7 +150,7 @@
                     <div class="timeline-content">
                         <h3>Software Developer</h3>
                         <h4>UBC Emerging Media Lab</h4>
-                        <p class="date">Septemeber 2024 - May 2025</p>
+                        <p class="date">September 2024 - May 2025</p>
                         <p>Augmented reality (AR) software development for Apple Vision Pro. <br/><a href="https://eml.ubc.ca/projects/augmented-reality-assisted-standard-operating-procedures-ar-a-sop/" target="_blank" rel="noopener noreferrer">Link to project</a></p>
                     </div>
                 </div>
@@ -197,19 +170,40 @@
 
     <footer>
         <div class="container footer-content">
-            <div class="footer-left">
-                <span class="footer-name">Kai Zhang</span> 
-            </div>
-            <div class="footer-center">
-                <p>&copy; 2024 Kai Zhang. All Rights Reserved.</p> 
-            </div>
-            <div class="footer-right social-links">
-                <a href="https://www.linkedin.com/in/kai-zhang-a38053299/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
-                <a href="https://github.com/kai-z99" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i class="fab fa-github"></i></a>
+            <p>&copy; 2024 Kai Zhang. All Rights Reserved.</p>
+            <div class="social-links">
+                <a href="https://www.linkedin.com/in/kai-zhang-a38053299/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">LinkedIn</a>
+                <a href="https://github.com/kai-z99" target="_blank" rel="noopener noreferrer" aria-label="GitHub">GitHub</a>
             </div>
         </div>
     </footer>
+    <script>
+        (function () {
+            var root = document.documentElement;
+            var button = document.getElementById("theme-toggle");
+            if (!button) return;
 
-    <script src="script.js"></script>
+            function isLightMode() {
+                return root.getAttribute("data-theme") === "light";
+            }
+
+            function updateButtonLabel() {
+                button.textContent = isLightMode() ? "Dark mode" : "Light mode";
+            }
+
+            button.addEventListener("click", function () {
+                if (isLightMode()) {
+                    root.removeAttribute("data-theme");
+                    localStorage.setItem("theme", "dark");
+                } else {
+                    root.setAttribute("data-theme", "light");
+                    localStorage.setItem("theme", "light");
+                }
+                updateButtonLabel();
+            });
+
+            updateButtonLabel();
+        })();
+    </script>
 </body>
-</html> 
+</html>
