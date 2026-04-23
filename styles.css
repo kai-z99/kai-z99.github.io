@@ -123,23 +123,6 @@ a:focus-visible {
     text-decoration: none;
 }
 
-/* --- Breadcrumb --- */
-
-.breadcrumb-wrap {
-    background: var(--surface);
-    border-bottom: 1px solid var(--line);
-    padding: 8px 0;
-}
-
-.breadcrumb {
-    font-size: 14px;
-    color: var(--text-muted);
-}
-
-.breadcrumb a {
-    font-weight: 600;
-}
-
 /* --- Hero --- */
 
 .hero-banner {
