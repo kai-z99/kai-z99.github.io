@@ -154,6 +154,13 @@ a:focus-visible {
     overflow: hidden;
 }
 
+.hero-frame picture,
+.project-card picture,
+.widget-frame picture {
+    display: block;
+    line-height: 0;
+}
+
 .hero-img {
     display: block;
     width: 100%;
