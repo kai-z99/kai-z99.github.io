@@ -5,20 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kai | Personal Website</title>
     <link rel="stylesheet" href="styles.css">
-    <script>
-        (function () {
-            var savedTheme = localStorage.getItem("theme");
-            if (savedTheme === "light") {
-                document.documentElement.setAttribute("data-theme", "light");
-            }
-        })();
-    </script>
 </head>
 <body>
-    <header>
-        <div class="container">
+    <header class="site-header">
+        <div class="container header-inner">
             <a href="#hero" class="site-brand">Kai Zhang</a>
-            <nav>
+            <nav class="main-nav" aria-label="Primary">
                 <ul>
                     <li><a href="#about">About</a></li>
                     <li><a href="#projects">Projects</a></li>
@@ -26,183 +18,277 @@
                     <li><a href="blog/index.html">Blog</a></li>
                 </ul>
             </nav>
-            <button id="theme-toggle" type="button" aria-label="Toggle light mode">Light mode</button>
         </div>
     </header>
 
-    <section id="hero">
+    <div class="breadcrumb-wrap">
         <div class="container">
-            <h1>Kai <span>Zhang</span></h1>
+            <p class="breadcrumb">Current location: <a href="#hero">Home</a></p>
         </div>
-    </section>
+    </div>
 
-    <section id="about">
-        <div class="container">
-            <h2>About</h2>
-            <p>I focus on both real-time and offline computer graphics, and I am also interested in accelerated computing.</p>
-        </div>
-    </section>
-
-    <section id="projects">
-        <div class="container">
-            <h2>Projects</h2>
-            <div class="project-grid">
-                <div class="project-card">
-                    <div class="project-info">
-                        <h3>Inferno Renderer</h3>
-                        <p>A realtime Vulkan renderer. Supports gltf 2.0 PBR. Runs on Windows and Linux.</p>
-                        <div class="project-links">
-                            <a href="https://github.com/kai-z99/inferno-renderer" class="btn" target="_blank" rel="noopener noreferrer">View Project</a>
-                        </div>
-                    </div>
+    <section id="hero" class="hero-banner" aria-label="Welcome">
+        <div class="container hero-inner">
+            <div class="hero-media-block">
+                <div class="hero-frame">
+                    <img src="images/website_image_1.png" alt="Translucent 3D figurines with neon backlighting" class="hero-img" width="640" height="360">
                 </div>
-
-                <!-- Project 1 -->
-                <div class="project-card">
-                    <img src="images/sssAssorted50000spp.png" alt="Raytracing Playground Screenshot" class="project-image">
-                    <div class="project-info">
-                        <h3>Raytracing Playground</h3>
-                        <p>A CUDA path tracer with analytic BSSRDFs and much more.</p>
-                        <div class="project-links">
-                            <a href="https://github.com/kai-z99/RaytracingPlayground" class="btn" target="_blank" rel="noopener noreferrer">View Project</a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="project-card">
-                    <img src="images/koopaEngineDemo1Trim4.gif" alt="KoopaEngine Demo GIF" class="project-image"> 
-                    <div class="project-info">
-                        <h3>Koopa Engine</h3>
-                        <p>A OpenGL Forward+ PBR renderer.</p>
-                        <div class="project-links">
-                            <a href="https://github.com/kai-z99/KoopaEngine" class="btn" target="_blank" rel="noopener noreferrer">View Project</a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="project-card">
-                    <img src="images/shadows1.png" alt="Advanced Soft Shadows" class="project-image">
-                    <div class="project-info">
-                        <h3>Advanced Soft Shadows</h3>
-                        <p>An interactive web-based demonstration of advanced soft shadow mapping algorithms.</p>
-                        <div class="project-links">
-                            <a href="https://kai-z99.github.io/AdvancedSoftShadows/" class="btn" target="_blank" rel="noopener noreferrer">View Project</a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="project-card">
-
-                    <img src="images/ARASOP.png" alt="AR-A-SOP" class="project-image">
-                    <div class="project-info">
-                        <h3>AR-A-SOP</h3>
-                        <p>An educational tool using Apple Vision Pro AR to help users repair the Martin T75 sliding table saw.</p>
-                        <div class="project-links">
-                            <a href="https://eml.ubc.ca/projects/augmented-reality-assisted-standard-operating-procedures-ar-a-sop/" class="btn" target="_blank" rel="noopener noreferrer">View Project</a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="project-card">
-
-                    <div class="project-info">
-                        <h3>Virtual Soils</h3>
-                        <p>View gaussian splats on the web.</p>
-                        <div class="project-links">
-                            <a href="https://github.com/ubcemergingmedialab/25---1002-SOIL-SCIENCE" class="btn" target="_blank" rel="noopener noreferrer">View Project</a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="project-card">
-
-                    <img src="images/mining.png" alt="Mining" class="project-image">
-                    <div class="project-info">
-                        <h3>Immersive Education in Mining</h3>
-                        <p>An AR/VR educational tool for engineering students to explore mining concepts, operations, and safety protocols.</p>
-                        <div class="project-links">
-                            <a href="https://eml.ubc.ca/projects/immersive-education-in-mining/" class="btn" target="_blank" rel="noopener noreferrer">View Project</a>
-                        </div>
-                    </div>
-                </div>
-                
-
-            </div> <!-- End of project-grid -->
-        </div> <!-- End of container -->
-    </section> <!-- End of projects section -->
-
-    <section id="experience">
-        <div class="container">
-            <h2>Work Experience</h2>
-            <p class="section-location">Vancouver, BC</p>
-            <div class="timeline">
-                <!-- Experience 1 -->
-                <div class="timeline-item">
-                    <div class="timeline-content">
-                        <h3>Project Team Lead, Software Developer</h3>
-                        <h4>UBC Emerging Media Lab</h4>
-                        <p class="date">May 2025 - Present</p>
-                        <p>Unreal Engine 5 VR development. <br/><a href="https://eml.ubc.ca/projects/immersive-education-in-mining/" target="_blank" rel="noopener noreferrer">Link to project</a></p>
-                    </div>
-                </div>
-
-                <div class="timeline-item">
-                    <div class="timeline-content">
-                        <h3>Software Developer</h3>
-                        <h4>UBC Emerging Media Lab</h4>
-                        <p class="date">September 2024 - May 2025</p>
-                        <p>Augmented reality (AR) software development for Apple Vision Pro. <br/><a href="https://eml.ubc.ca/projects/augmented-reality-assisted-standard-operating-procedures-ar-a-sop/" target="_blank" rel="noopener noreferrer">Link to project</a></p>
-                    </div>
-                </div>
-                
-                <!-- Experience 2 (Previously Cashier) -->
-                <div class="timeline-item">
-                    <div class="timeline-content">
-                        <h3>Cashier</h3>
-                        <h4>McDonald's</h4>
-                        <p class="date">May 2021 - June 2022</p>
-                        <p></p> 
-                    </div>
-                </div>
+            </div>
+            <div class="hero-text-block">
+                <h1 class="hero-title">Kai <span class="name-accent">Zhang</span></h1>
             </div>
         </div>
     </section>
 
-    <footer>
+    <div class="container layout-split">
+        <main class="main-column">
+            <section id="about" class="panel-section">
+                <div class="section-title-bar">
+                    <h2>About</h2>
+                </div>
+                <div class="section-panel-body">
+                    <p>I focus on both real-time and offline computer graphics, and I am also interested in accelerated computing.</p>
+                </div>
+            </section>
+
+            <section id="projects" class="panel-section">
+                <div class="section-title-bar">
+                    <h2>Projects</h2>
+                </div>
+                <div class="project-grid">
+                    <div class="project-card">
+                        <img src="images/website_image_3.png" alt="Inferno Renderer" class="project-image">
+                        <div class="project-info">
+                            <h3>Inferno Renderer</h3>
+                            <p>A realtime Vulkan renderer. Supports gltf 2.0 PBR. Runs on Windows and Linux.</p>
+                            <div class="project-links">
+                                <a href="https://github.com/kai-z99/inferno-renderer" class="btn" target="_blank" rel="noopener noreferrer">View Project</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="project-card">
+                        <img src="images/rtplayground.png" alt="Raytracing Playground Screenshot" class="project-image">
+                        <div class="project-info">
+                            <h3>Raytracing Playground</h3>
+                            <p>A CUDA path tracer with analytic BSSRDFs and much more.</p>
+                            <div class="project-links">
+                                <a href="https://github.com/kai-z99/RaytracingPlayground" class="btn" target="_blank" rel="noopener noreferrer">View Project</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="project-card">
+                        <img src="images/koopaEngineDemo1Trim4-static.png" alt="Koopa Engine preview" class="project-image">
+                        <div class="project-info">
+                            <h3>Koopa Engine</h3>
+                            <p>A OpenGL Forward+ PBR renderer.</p>
+                            <div class="project-links">
+                                <a href="https://github.com/kai-z99/KoopaEngine" class="btn" target="_blank" rel="noopener noreferrer">View Project</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="project-card">
+                        <img src="images/shadows1.png" alt="Advanced Soft Shadows" class="project-image">
+                        <div class="project-info">
+                            <h3>Advanced Soft Shadows</h3>
+                            <p>An interactive web-based demonstration of advanced soft shadow mapping algorithms.</p>
+                            <div class="project-links">
+                                <a href="https://kai-z99.github.io/AdvancedSoftShadows/" class="btn" target="_blank" rel="noopener noreferrer">View Project</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="project-card">
+                        <img src="images/ARASOP.png" alt="AR-A-SOP" class="project-image">
+                        <div class="project-info">
+                            <h3>AR-A-SOP</h3>
+                            <p>An educational tool using Apple Vision Pro AR to help users repair the Martin T75 sliding table saw.</p>
+                            <div class="project-links">
+                                <a href="https://eml.ubc.ca/projects/augmented-reality-assisted-standard-operating-procedures-ar-a-sop/" class="btn" target="_blank" rel="noopener noreferrer">View Project</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="project-card">
+                        <img src="images/vsoils.png" alt="Virtual Soils" class="project-image">
+                        <div class="project-info">
+                            <h3>Virtual Soils</h3>
+                            <p>View gaussian splats on the web.</p>
+                            <div class="project-links">
+                                <a href="https://github.com/ubcemergingmedialab/25---1002-SOIL-SCIENCE" class="btn" target="_blank" rel="noopener noreferrer">View Project</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="project-card">
+                        <img src="images/mining.png" alt="Mining" class="project-image">
+                        <div class="project-info">
+                            <h3>Immersive Education in Mining</h3>
+                            <p>An AR/VR educational tool for engineering students to explore mining concepts, operations, and safety protocols.</p>
+                            <div class="project-links">
+                                <a href="https://eml.ubc.ca/projects/immersive-education-in-mining/" class="btn" target="_blank" rel="noopener noreferrer">View Project</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="experience" class="panel-section">
+                <div class="section-title-bar">
+                    <h2>Work Experience</h2>
+                </div>
+                <div class="section-panel-body experience-body">
+                <p class="section-location">Vancouver, BC</p>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <h3>Project Team Lead, Software Developer</h3>
+                            <h4>UBC Emerging Media Lab</h4>
+                            <p class="date">May 2025 - Present</p>
+                            <p>Unreal Engine 5 VR development.</p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <h3>Software Developer</h3>
+                            <h4>UBC Emerging Media Lab</h4>
+                            <p class="date">September 2024 - May 2025</p>
+                            <p>Augmented reality (AR) software development for Apple Vision Pro.</p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <h3>Cashier</h3>
+                            <h4>McDonald's</h4>
+                            <p class="date">May 2021 - June 2022</p>
+                            <p></p>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </section>
+        </main>
+
+        <aside class="sidebar" aria-label="Additional media">
+            <div class="sidebar-widget">
+                <div class="widget-title-bar">Gallery</div>
+                <div class="widget-body widget-gallery">
+                    <div class="widget-frame">
+                        <img src="images/website_gif_3.gif" alt="3D computer graphics animation" class="widget-img" width="260" height="200">
+                    </div>
+                    <div class="widget-frame">
+                        <img src="images/website_gif_1.gif" alt="Rotating 3D model of an iridescent abalone shell" class="widget-img" width="260" height="200">
+                    </div>
+                    <div class="widget-frame">
+                        <img src="images/website_gif_2.gif" alt="3D computer graphics animation" class="widget-img" width="260" height="200">
+                    </div>
+                    <div class="widget-frame">
+                        <img src="images/website_image_4.png" alt="Gallery image" class="widget-img" width="260" height="200">
+                    </div>
+                    <div class="widget-frame">
+                        <img src="images/website_image_5.png" alt="Gallery image" class="widget-img" width="260" height="200">
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <footer class="site-footer">
         <div class="container footer-content">
-            <p>&copy; 2024 Kai Zhang. All Rights Reserved.</p>
+            <p>&copy; 2024 Kai Zhang</p>
             <div class="social-links">
                 <a href="https://www.linkedin.com/in/kai-zhang-a38053299/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">LinkedIn</a>
                 <a href="https://github.com/kai-z99" target="_blank" rel="noopener noreferrer" aria-label="GitHub">GitHub</a>
             </div>
         </div>
     </footer>
+
+    <div id="image-lightbox" class="image-lightbox" role="dialog" aria-modal="true" aria-label="Enlarged image" hidden>
+        <div class="image-lightbox__inner">
+            <button type="button" class="image-lightbox__close" id="image-lightbox-close" aria-label="Close enlarged image">&times;</button>
+            <img class="image-lightbox__img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="" width="1" height="1" decoding="async">
+        </div>
+    </div>
     <script>
         (function () {
-            var root = document.documentElement;
-            var button = document.getElementById("theme-toggle");
-            if (!button) return;
+            var lightbox = document.getElementById("image-lightbox");
+            var fullImg = lightbox ? lightbox.querySelector(".image-lightbox__img") : null;
+            var closeBtn = document.getElementById("image-lightbox-close");
+            if (!lightbox || !fullImg || !closeBtn) return;
 
-            function isLightMode() {
-                return root.getAttribute("data-theme") === "light";
+            var SELECTOR = ".hero-img, .project-image, .widget-img";
+            var PLACEHOLDER = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+            var lastSource = null;
+
+            function isOpen() {
+                return !lightbox.hasAttribute("hidden");
             }
 
-            function updateButtonLabel() {
-                button.textContent = isLightMode() ? "Dark mode" : "Light mode";
+            function openFrom(source) {
+                lastSource = source;
+                fullImg.src = source.currentSrc || source.src;
+                fullImg.alt = source.alt || "";
+                fullImg.removeAttribute("width");
+                fullImg.removeAttribute("height");
+                lightbox.removeAttribute("hidden");
+                document.body.style.overflow = "hidden";
+                closeBtn.focus();
             }
 
-            button.addEventListener("click", function () {
-                if (isLightMode()) {
-                    root.removeAttribute("data-theme");
-                    localStorage.setItem("theme", "dark");
-                } else {
-                    root.setAttribute("data-theme", "light");
-                    localStorage.setItem("theme", "light");
+            function close() {
+                if (!isOpen()) return;
+                fullImg.src = PLACEHOLDER;
+                fullImg.alt = "";
+                fullImg.setAttribute("width", "1");
+                fullImg.setAttribute("height", "1");
+                lightbox.setAttribute("hidden", "");
+                document.body.style.overflow = "";
+                if (lastSource && typeof lastSource.focus === "function") {
+                    lastSource.focus();
                 }
-                updateButtonLabel();
+                lastSource = null;
+            }
+
+            function bind(el) {
+                el.setAttribute("tabindex", "0");
+                el.setAttribute("role", "button");
+                if (!el.title) el.setAttribute("title", "Click or Enter to enlarge");
+                var label = (el.getAttribute("aria-label") || el.alt || "Image") + " — view larger";
+                el.setAttribute("aria-label", label);
+
+                el.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    openFrom(el);
+                });
+                el.addEventListener("keydown", function (e) {
+                    if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        openFrom(el);
+                    }
+                });
+            }
+
+            document.querySelectorAll(SELECTOR).forEach(bind);
+
+            function onBackdropOrBox(e) {
+                if (e.target === lightbox) close();
+            }
+            lightbox.addEventListener("click", onBackdropOrBox);
+            closeBtn.addEventListener("click", function (e) {
+                e.stopPropagation();
+                close();
             });
 
-            updateButtonLabel();
+            document.addEventListener("keydown", function (e) {
+                if (e.key === "Escape" && isOpen()) {
+                    e.preventDefault();
+                    close();
+                }
+            });
         })();
     </script>
 </body>
