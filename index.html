@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kai | Personal Website</title>
     <link rel="preload" as="image" href="images/website_image_1.webp" type="image/webp">
-    <link rel="stylesheet" href="styles.css?v=20260422q">
+    <link rel="stylesheet" href="styles.css?v=20260422r">
 </head>
 <body>
     <header class="site-header">
@@ -41,7 +41,8 @@
                     <div class="widget-title-bar">
                         <h2>Projects</h2>
                     </div>
-                    <div class="widget-body project-grid">
+                    <div class="widget-body">
+                    <div class="project-grid" id="project-grid" aria-label="Project list">
                     <div class="project-card">
                         <picture>
                             <source type="image/webp" srcset="images/website_image_3.webp">
@@ -139,6 +140,10 @@
                             </div>
                         </div>
                     </div>
+                    </div>
+                    <p class="project-show-more-wrap" hidden>
+                        <button type="button" class="project-show-more" id="project-show-more" hidden aria-expanded="false" aria-controls="project-grid">Show more</button>
+                    </p>
                 </div>
                 </div>
             </section>
@@ -322,5 +327,6 @@
             });
         })();
     </script>
+    <script src="script.js"></script>
 </body>
 </html>

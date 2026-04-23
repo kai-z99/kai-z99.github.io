@@ -1,5 +1,30 @@
 // Wait for DOM content to load
 document.addEventListener('DOMContentLoaded', () => {
+    const initialProjectCount = 4;
+    const projectGrid = document.getElementById('project-grid');
+    const showMoreBtn = document.getElementById('project-show-more');
+    const showMoreWrap = showMoreBtn && showMoreBtn.closest('.project-show-more-wrap');
+
+    if (projectGrid && showMoreBtn) {
+        const cards = projectGrid.querySelectorAll('.project-card');
+        const extra = cards.length - initialProjectCount;
+        if (extra > 0) {
+            projectGrid.classList.add('project-grid--collapsed');
+            const expandLabel = 'Show ' + extra + ' more';
+            const collapseLabel = 'Show less';
+            showMoreBtn.textContent = expandLabel;
+            showMoreBtn.removeAttribute('hidden');
+            if (showMoreWrap) {
+                showMoreWrap.removeAttribute('hidden');
+            }
+            showMoreBtn.addEventListener('click', function () {
+                const collapsed = projectGrid.classList.toggle('project-grid--collapsed');
+                showMoreBtn.setAttribute('aria-expanded', String(!collapsed));
+                showMoreBtn.textContent = collapsed ? expandLabel : collapseLabel;
+            });
+        }
+    }
+
     // Sticky header
     const header = document.querySelector('header');
 

@@ -203,9 +203,46 @@ a:focus-visible {
 }
 
 /* Full-bleed list inside the widget: avoid .widget-body padding showing as a gray gutter */
-#projects .widget-body.project-grid {
+#projects .widget-body {
     padding: 0;
     background: var(--surface);
+}
+
+#projects .project-grid--collapsed .project-card:nth-child(n + 5) {
+    display: none;
+}
+
+#projects .project-grid--collapsed .project-card:nth-child(4) {
+    border-bottom: 0;
+}
+
+.project-show-more-wrap {
+    margin: 0;
+    padding: 14px 20px 18px;
+    text-align: center;
+    background: var(--surface);
+    border-top: 1px solid #e4e4e4;
+}
+
+.project-show-more {
+    font: inherit;
+    color: var(--purple-link);
+    text-decoration: underline;
+    background: none;
+    border: 0;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.project-show-more:hover {
+    color: var(--purple-bright);
+}
+
+.project-show-more:focus-visible {
+    outline: 2px solid var(--purple-mid);
+    outline-offset: 2px;
 }
 
 /* --- Project list --- */
