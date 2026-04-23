@@ -274,6 +274,12 @@ a:focus-visible {
     border-bottom: 0;
 }
 
+/* Full-bleed list inside the widget: avoid .widget-body padding showing as a gray gutter */
+#projects .widget-body.project-grid {
+    padding: 0;
+    background: var(--surface);
+}
+
 /* --- Project list --- */
 
 .project-grid {
