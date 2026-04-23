@@ -11,10 +11,6 @@ author: Kai Zhang
 
 This article assumes you are familiar with basic shadow mapping. If not, I highly recommend to check [LearnOpenGLs tutorial](https://learnopengl.com/Advanced-Lighting/Shadows/Shadow-Mapping).
 
-Soft shadows are one of the most important aspects of making your world realistic. Unfortunatly, this is also one of the areas that is the most difficult to do efficiently and visually correctly. There have been many years of research at this point of different techniques that have been developed. The general consensus and the strategy used in pretty much all modern engines is shadowmapping. Ill go through 6 shadowmapping algorithms that I've selected in this article. But keep in mind there are tens and probably hundreds of other shadow mapping techniques that I havae not covered.
-
-I've been very interested in soft soft shadows for a while, and I've found some time to implement a bunch of interesting shadow mapping techniques. For each technique, I'll  go over a bit of theory, then a tutorial on how to implement it your own engine! I'll go over my opinion on each technique and situations where I think they would be useful.
-
 
 ## Hard Shadows Definition
 
