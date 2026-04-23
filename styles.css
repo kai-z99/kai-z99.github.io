@@ -178,12 +178,15 @@ a:focus-visible {
 .hero-text-block {
     flex: 1 1 220px;
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 8px;
     min-width: 0;
-    background: linear-gradient(135deg, var(--purple-mid) 0%, var(--purple-dark) 100%);
+    background: linear-gradient(180deg, #9b59b6 0%, var(--purple-mid) 45%, var(--purple-dark) 100%);
     border-radius: var(--radius);
     padding: 32px 36px;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 2px 8px var(--shadow);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 2px 8px var(--shadow);
     border: 1px solid var(--purple-dark);
 }
 
@@ -199,6 +202,16 @@ a:focus-visible {
 
 .name-accent {
     color: #e8d4f5;
+}
+
+.hero-affiliation {
+    margin: 0;
+    font-size: clamp(0.95rem, 1.5vw, 1.1rem);
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
+    letter-spacing: 0.02em;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+    line-height: 1.35;
 }
 
 /* --- Main + sidebar --- */
@@ -445,7 +458,7 @@ a:focus-visible {
 }
 
 .widget-title-bar {
-    background: linear-gradient(180deg, #7d3c98 0%, var(--purple-mid) 50%, #5b2a78 100%);
+    background: linear-gradient(180deg, #9b59b6 0%, var(--purple-mid) 45%, var(--purple-dark) 100%);
     color: #fff;
     font-size: 15px;
     font-weight: 700;
@@ -453,6 +466,7 @@ a:focus-visible {
     letter-spacing: 0.04em;
     padding: 7px 12px;
     border-bottom: 1px solid var(--purple-dark);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
     text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
 }
 
