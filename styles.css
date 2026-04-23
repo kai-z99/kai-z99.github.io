@@ -560,24 +560,26 @@ a:focus-visible {
     right: 1rem;
     z-index: 10001;
     line-height: 1;
-    padding: 0.2rem 0.55rem;
+    padding: 0.35rem 0.65rem;
     font-size: 1.75rem;
     font-family: Tahoma, Arial, sans-serif;
+    font-weight: 700;
     color: #fff;
-    background: var(--purple-dark);
-    border: 1px solid rgba(255, 255, 255, 0.35);
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(180deg, #b07cb8 0%, var(--purple-mid) 45%, var(--purple-dark) 100%);
+    border: 1px solid var(--purple-dark);
     border-radius: var(--radius-sm);
     cursor: pointer;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px var(--shadow);
 }
 
 .image-lightbox__close:hover {
-    background: var(--purple-mid);
     color: #fff;
+    background: linear-gradient(180deg, #c18fc9 0%, #7b3899 50%, #5a2680 100%);
 }
 
 .image-lightbox__close:focus-visible {
-    outline: 2px solid #fff;
+    outline: 2px solid var(--purple-bright);
     outline-offset: 2px;
 }
 
