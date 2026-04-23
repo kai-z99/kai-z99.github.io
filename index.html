@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kai | Personal Website</title>
     <link rel="preload" as="image" href="images/website_image_1.webp" type="image/webp">
-    <link rel="stylesheet" href="styles.css?v=20260422m">
+    <link rel="stylesheet" href="styles.css?v=20260422q">
 </head>
 <body>
     <header class="site-header">
         <div class="container header-inner">
-            <a href="#hero" class="site-brand">Kai Zhang</a>
+            <a href="#gallery" class="site-brand">Kai Zhang</a>
             <nav class="main-nav" aria-label="Primary">
                 <ul>
                     <li><a href="#about">About</a></li>
@@ -22,32 +22,16 @@
         </div>
     </header>
 
-    <section id="hero" class="hero-banner" aria-label="Welcome">
-        <div class="container hero-inner">
-            <div class="hero-media-block">
-                <div class="hero-frame">
-                    <picture>
-                        <source type="image/webp" srcset="images/website_image_1.webp">
-                        <img src="images/website_image_1.png" alt="Translucent 3D figurines with neon backlighting" class="hero-img" width="1918" height="1111" fetchpriority="high">
-                    </picture>
-                </div>
-            </div>
-            <div class="hero-text-block">
-                <h1 class="hero-title">Kai <span class="name-accent">Zhang</span></h1>
-                <p class="hero-affiliation">University of British Columbia</p>
-            </div>
-        </div>
-    </section>
-
     <div class="container layout-split">
         <main class="main-column">
+            <h1 class="visually-hidden">Kai Zhang</h1>
             <section id="about" class="panel-section">
                 <div class="sidebar-widget">
                     <div class="widget-title-bar">
                         <h2>About</h2>
                     </div>
                     <div class="widget-body">
-                        <p>I focus on both real-time and offline computer graphics, and I am also interested in accelerated computing.</p>
+                        <p>I'm currently a 3rd year student at the University of British Columbia studying computer science. I am mainly interested in both real-time and offline computer graphics, using technologies like Vulkan, OpenGL, CUDA, and more.</p>
                     </div>
                 </div>
             </section>
@@ -199,10 +183,16 @@
             </section>
         </main>
 
-        <aside class="sidebar" aria-label="Additional media">
+        <aside id="gallery" class="sidebar" aria-label="Additional media">
             <div class="sidebar-widget">
                 <div class="widget-title-bar">Gallery</div>
                 <div class="widget-body widget-gallery">
+                    <div class="widget-frame">
+                        <picture>
+                            <source type="image/webp" srcset="images/website_image_1.webp">
+                            <img src="images/website_image_1.png" alt="Translucent 3D figurines with neon backlighting" class="widget-img" width="1918" height="1111" fetchpriority="high" loading="eager" decoding="async">
+                        </picture>
+                    </div>
                     <div class="widget-frame">
                         <picture>
                             <source type="image/webp" srcset="images/website_gif_3.webp?v=2">
@@ -261,7 +251,7 @@
             var closeBtn = document.getElementById("image-lightbox-close");
             if (!lightbox || !fullImg || !closeBtn) return;
 
-            var SELECTOR = ".hero-img, .project-image, .widget-img";
+            var SELECTOR = ".project-image, .widget-img";
             var PLACEHOLDER = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
             var lastSource = null;
 

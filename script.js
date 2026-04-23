@@ -2,8 +2,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Sticky header
     const header = document.querySelector('header');
-    const heroSection = document.querySelector('#hero');
-    
+
     window.addEventListener('scroll', () => {
         if (window.scrollY > 50) {
             header.classList.add('scrolled');
